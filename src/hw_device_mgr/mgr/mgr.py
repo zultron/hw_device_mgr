@@ -184,7 +184,7 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
     #
     def on_before_fault_command(self, e):
         if self.fsm_check_command(e):
-            self.logger.err("Entering fault state")
+            self.logger.error("Entering fault state")
             return True
         else:
             return False
@@ -424,9 +424,9 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
             except Exception:
                 # Ignore other exceptions & enter fault mode in
                 # hopes we can recover
-                self.logger.err("Ignoring unexpected exception; details:")
+                self.logger.error("Ignoring unexpected exception; details:")
                 for line in traceback.format_exc().splitlines():
-                    self.logger.err(line)
+                    self.logger.error(line)
                 self.command_in.set(
                     state_cmd="fault", msg_log="Unexpected exception"
                 )
@@ -450,7 +450,7 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
             self.logger.info(f"KeyboardInterrupt: {e}")
             self.shutdown = True
         except HWDeviceTimeout as e:
-            self.logger.err(e)
+            self.logger.error(e)
 
     fsm_next_state_map = dict(
         # Map current command to dict of {current_state:next_event}

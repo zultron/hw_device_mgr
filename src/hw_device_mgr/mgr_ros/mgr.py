@@ -42,9 +42,9 @@ class ROSHWDeviceMgr(HWDeviceMgr):
             except Exception:
                 # Ignore other exceptions & enter fault mode in
                 # hopes we can recover
-                self.logger.err("Ignoring unexpected exception; details:")
+                self.logger.error("Ignoring unexpected exception; details:")
                 for line in traceback.format_exc().splitlines():
-                    self.logger.err(line)
+                    self.logger.error(line)
                 self.command_in.set(
                     state_cmd="fault", msg_log="Unexpected exception"
                 )
@@ -72,9 +72,9 @@ class ROSHWDeviceMgr(HWDeviceMgr):
             except Exception:
                 # Ignore other exceptions & enter fault mode in
                 # hopes we can recover
-                self.logger.err("Ignoring unexpected exception; details:")
+                self.logger.error("Ignoring unexpected exception; details:")
                 for line in traceback.format_exc().splitlines():
-                    self.logger.err(line)
+                    self.logger.error(line)
                 self.command_in.set(
                     state_cmd="fault", msg_log="Unexpected exception"
                 )
