@@ -39,6 +39,7 @@ class TestROSHWDeviceMgr(BaseROSMgrTestClass, _TestHWDeviceMgr):
         self.obj = device_cls(device_data=all_device_data.values())
         self.obj.init(list())
         self.obj.init_devices(tmpfile)
+        # print("device_config:", self.obj.device_config)
         yield self.obj
 
     def test_ros_params(self, obj):
@@ -53,4 +54,6 @@ class TestROSHWDeviceMgr(BaseROSMgrTestClass, _TestHWDeviceMgr):
         for devc in obj.device_config:
             if devc["category"] == "bogus_v1_io":
                 continue
+            # print("device config:")
+            # print(pformat(devc))
             assert "param_values" in devc

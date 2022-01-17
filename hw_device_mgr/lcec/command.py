@@ -62,6 +62,7 @@ class LCECCommand(EtherCATCommand):
         return devices
 
     def upload(self, address=None, index=None, subindex=0, datatype=None):
+        # print("lcec upload")
         index = self.data_type_class.uint16(index)
         subindex = self.data_type_class.uint16(subindex)
         output = self._ethercat(
@@ -86,6 +87,7 @@ class LCECCommand(EtherCATCommand):
         datatype=None,
         dry_run=False,
     ):
+        # print("lcec download")
         self._ethercat(
             "download",
             f"--master={address[0]}",

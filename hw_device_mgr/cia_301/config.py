@@ -74,9 +74,14 @@ class CiA301Config:
     @classmethod
     def add_device_sdos(cls, sdo_data):
         """Add device model object dictionary descriptions."""
+        # print("CiA301Config:  add_device_sdos")
+        # print("sdo_data.keys():", list(sdo_data.keys()))
+        # print("sdo_data:", sdo_data)
         for model_id, sdos in sdo_data.items():
             sdos_new = dict()
             for ix, sd in sdos.items():
+                # print("ix:", ix)
+                # print("sd:", sd)
                 ix = cls.sdo_ix(ix)
                 if ix in sdos_new:
                     raise KeyError(f"Duplicate SDO index {ix}")
@@ -84,7 +89,15 @@ class CiA301Config:
                     sdos_new[ix] = sd
                 else:
                     sdos_new[ix] = cls.sdo_class(**sd)
+            # print("cia_301 config model_id:", model_id)
+            # print("cia_301 config sdos_new:", sdos_new)
+            # assert model_id not in cls._model_sdos
+            # if (model_id[1] & 0xff00) != 0x1000:  # IO
+            #     assert sdos_new
+            # print(f"Adding {model_id} to cls._model_sdos")
             cls._model_sdos[model_id] = sdos_new
+        # print("_model_sdos.keys():", list(cls._model_sdos.keys()))
+        # print("leaving CiA301Config:  add_device_sdos")
 
     @classmethod
     def sdo_ix(cls, ix):
@@ -100,6 +113,8 @@ class CiA301Config:
         if isinstance(ix, self.sdo_class):
             return ix
         ix = self.sdo_ix(ix)
+        # print("model_id:", self.model_id)
+        # print("_model_sdos[model_id]:", self._model_sdos[self.model_id])
         return self._model_sdos[self.model_id][ix]
 
     #
@@ -115,6 +130,8 @@ class CiA301Config:
             subindex=sdo.subindex,
             datatype=sdo.data_type,
         )
+        # print("sdo:", repr(sdo))
+        # print("sdo.data_type:", repr(sdo.data_type))
         return sdo.data_type(res_raw)
 
     def download(self, sdo, val, dry_run=False):
@@ -204,7 +221,10 @@ class CiA301Config:
     def config(self):
         if self._config is None:
             # Find matching config
+            # print("self._device_config", self._device_config)
+            # print("self.model_id", self.model_id)
             for conf in self._device_config:
+                # print("conf:", conf)
                 if "vendor_id" not in conf:
                     continue  # In tests only
                 if self.model_id != (conf["vendor_id"], conf["product_code"]):
@@ -212,9 +232,14 @@ class CiA301Config:
                 if self.bus != conf["bus"]:
                     continue
                 if self.position not in conf["positions"]:
+                    # print(
+                    #     f"position {self.position} not in {conf['positions']}"
+                    # )
                     continue
                 break
             else:
+                # print("self._device_config", self._device_config)
+                # print("self.model_id", self.model_id)
                 raise KeyError(f"No config for device at {self.address}")
             # Prune & cache config
             self._config = self.munge_config(conf)
@@ -249,7 +274,12 @@ class CiA301SimConfig(CiA301Config):
     @classmethod
     def init_sim(cls, device_data=None):
         assert device_data
+        # print("CiA301SimConfig init_sim")
+        # print("device_data:", device_data)
         sdo_data = dict()
+        # print("_model_sdos:", cls._model_sdos)
         for address, data in device_data.items():
+            # print(data)
+            # print("cls._model_sdos", cls._model_sdos)
             sdo_data[address] = cls._model_sdos[data["model_id"]]
         cls.command_class.init_sim(device_data=device_data, sdo_data=sdo_data)

@@ -40,12 +40,26 @@ class BaseTestClass:
     def munge_device_data(cls, device_data):
         """Massage device test data for usability."""
         # Locate device model class
+        # print("device_data:", device_data)
+        # print("device_data[category]:", device_data["category"])
+        # print(
+        #     "cls.get_model(device_data[category]):",
+        #     cls.get_model(category=device_data["category"]),
+        # )
+        # print("cls.get_model():", cls.get_model())
+        # print(
+        #     cls.get_model(category=device_data["category"]), cls.get_model()
+        # )
+
+        # print("device_data:", device_data)
+        # print("cls._device_data:", cls._device_data)
         for dev in device_data:
             device_cls = cls.device_class.device_category_class(dev["category"])
             if device_cls is None:
                 continue
 
             # Set sparse keys
+            # print("model_id:", device_cls.model_id)
             updates = dict(
                 model_id=device_cls.device_type_key(),
                 name=device_cls.name,
@@ -84,13 +98,16 @@ class BaseTestClass:
 
     def pytest_generate_tests(self, metafunc):
         # Dynamic test parametrization
+        # print("BaseTestClass:  pytest_generate_tests")
         # - device_data:  iterate through `device_data_yaml` list
         if "device_data" not in metafunc.fixturenames:
             return
 
         path, device_data = self.load_yaml(self.device_data_yaml, True)
+        # print(f"  loaded device_data from {path}")
         device_data = self.munge_device_data(device_data)
         vals, ids = (list(), list())
+        # print("base_stest_class device_data:", device_data)
         for dev in device_data:
             ids.append(f"{dev['name']}@{dev['address']}")
             vals.append(dev)

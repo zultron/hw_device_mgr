@@ -13,6 +13,8 @@ class TestCiA301Config(BaseCiA301TestClass):
 
     @pytest.fixture
     def obj(self, device_data, config_cls):
+        # print("config device_data:", device_data)
+        # print("config config_:", config_cls)
         self.obj = config_cls(
             address=device_data["address"], model_id=device_data["model_id"]
         )
@@ -23,9 +25,14 @@ class TestCiA301Config(BaseCiA301TestClass):
         print("registered models:", list(config_cls._model_sdos))
         print("config_cls._model_sdos:", config_cls._model_sdos)
         assert obj.model_id in config_cls._model_sdos
+        # print("obj model sdos keys:", sorted(obj._model_sdos.keys()))
         obj_sdos = obj._model_sdos[obj.model_id]
+        # print("obj sdos keys:", sorted(obj_sdos.keys()))
+        # print("sdo data keys:", sorted(sdo_data.keys()))
         assert len(obj_sdos) == len(sdo_data)
+        # print("num SDOs:", len(obj_sdos))
         for ix, expected_sdo in sdo_data.items():
+            # print("    index:", ix)
             assert ix in obj_sdos
             obj_sdo = obj_sdos[ix]
             assert isinstance(obj_sdo, config_cls.sdo_class)
@@ -50,8 +57,11 @@ class TestCiA301Config(BaseCiA301TestClass):
         for sdo in sdo_data.values():
             sdo_ix = (sdo.index, sdo.subindex)
             print(sdo_ix)
+            # print(f"Uploading SDO {sdo_ix}")
             val = obj.upload(sdo_ix)
+            # print(f"Downloading SDO {sdo_ix} = {val}+1")
             obj.download(sdo_ix, val + 1)
+            # print(f"Uploading SDO {sdo_ix}")
             assert obj.upload(sdo_ix) == val + 1
 
     def test_write_config_param_values(self, obj, sdo_data):

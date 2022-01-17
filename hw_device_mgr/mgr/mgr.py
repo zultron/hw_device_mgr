@@ -82,12 +82,14 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         self.init_device_classes(device_config=device_config)
         kwargs.setdefault("sim", self.sim)
         self.devices = self.scan_devices(**kwargs)
+        # print("self.devices", self.devices)
         self.init_device_instances()
 
     def init_device_classes(self, device_config=None):
         if device_config is None:
             raise RuntimeError("No device config set")
         self.device_config = device_config
+        # print("device_config:", device_config)
         self.device_base_class.set_device_config(device_config)
 
     @classmethod
@@ -95,7 +97,9 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         return cls.device_base_class.scan_devices(sim=sim, **kwargs)
 
     def init_device_instances(self, **kwargs):
+        # print("init_device_instances:", type(self))
         for i, dev in enumerate(self.devices):
+            # print("dev", dev, "type", type(dev))
             dev.init(index=i, **kwargs)
             self.logger.info(f"Adding device #{i}: {dev}")
 

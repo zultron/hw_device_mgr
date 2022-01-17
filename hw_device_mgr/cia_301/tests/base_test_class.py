@@ -39,6 +39,7 @@ class BaseCiA301TestClass(BaseTestClass):
     device_model_sdo_clone = None
 
     def init_sim(self):
+        # print("BaseCiA301TestClass:  init_sim")
         assert not getattr(self, "_sim_initialized", False)  # Run once only
         self.device_class.clear_devices()
         self.config_class._device_config.clear()
@@ -67,6 +68,7 @@ class BaseCiA301TestClass(BaseTestClass):
 
     @pytest.fixture
     def device_cls(self, extra_fixtures):
+        # print("BaseCiA301TestClass:  device_cls")
         self.init_sim()
         yield self.device_class
 
@@ -157,6 +159,7 @@ class BaseCiA301TestClass(BaseTestClass):
         `device_data` attribute.
         """
         self.device_data = _device_data
+        # print("device_data _device_data", _device_data)
         self.device_model_cls = device_cls.get_model(_device_data["model_id"])
         yield _device_data
 
@@ -175,21 +178,26 @@ class BaseCiA301TestClass(BaseTestClass):
         yield _sdo_data
 
     def munge_sdo_data(self, sdo_data, conv_sdos=False):
+        # print("cia_301 base_test_class Munging SDO data")
         new_sdo_data = dict()
         for category, old_sdos in sdo_data.items():
             sdos = new_sdo_data[category] = dict()
             for ix, sdo in old_sdos.items():
                 ix = self.config_class.sdo_ix(ix)
+                # print("sdo:", sdo)
                 sdos[ix] = self.sdo_class(**sdo) if conv_sdos else sdo
         return new_sdo_data
 
     def munge_device_data(self, device_data):
+        # print("cia_301 base_test_class Munging device data")
         device_base_cls = getattr(self, "device_base_class", self.device_class)
         device_category_class = device_base_cls.device_category_class
         new_device_data = list()
         for dev in device_data:
+            # print("    dev before:", dev)
             device_class = device_category_class(dev["category"])
             if device_class is None:
+                # print("    skipping", dev["category"])
                 continue
             dev = dev.copy()
             new_device_data.append(dev)
@@ -202,6 +210,8 @@ class BaseCiA301TestClass(BaseTestClass):
             dev["conf_category"] = dev["category"]
             dev["category"] = device_class.category
             dev["cls"] = device_class
+        # for dev in new_device_data:
+        #     print("    dev:", dev)
         return new_device_data
 
     def pytest_generate_tests(self, metafunc):
@@ -211,10 +221,16 @@ class BaseCiA301TestClass(BaseTestClass):
         # - _sdo_data:  iterate through `sdo_data` values
         # - bus:  iterate through `device_data` unique `bus` values
         # *Note all three cases are mutually exclusive
+        # print("BaseCiA301TestClass:  pytest_generate_tests")
+        # print("metafunc.fixturenames", metafunc.fixturenames)
         path, dev_data = self.load_yaml(self.device_data_yaml, True)
         dev_data = self.munge_device_data(dev_data)
+        # print(f"Loaded device data from {path}")
         path, sdo_data = self.load_yaml(self.device_sdos_yaml, True)
         sdo_data = self.munge_sdo_data(sdo_data, conv_sdos=True)
+        # print(f"Loaded SDO data from {path}")
+        # print("sdo_data:", sdo_data)
+        # print("sdo_data.keys():", sdo_data.keys())
         names = list()
         vals, ids = (list(), list())
         if "_device_data" in metafunc.fixturenames:
@@ -231,11 +247,13 @@ class BaseCiA301TestClass(BaseTestClass):
         elif "_sdo_data" in metafunc.fixturenames:
             names.append("_sdo_data")
             for category, device_sdos in sdo_data.items():
+                # print("category:", category)
                 vals.append(device_sdos)
                 ids.append(category)
         elif "bus" in metafunc.fixturenames:
             names.append("bus")
             vals = list(d for d in {d["bus"] for d in dev_data})
             ids.extend(f"bus{b}" for b in vals)
+        # print("generated parameters:", ",".join(names), vals, ids, "class")
         if names:
             metafunc.parametrize(",".join(names), vals, ids=ids, scope="class")

@@ -55,20 +55,42 @@ class EtherCATDevice(CiA301Device, abc.ABC):
         Path is under the module directory,
         `{device_xml_dir}/{xml_description_fname}`.
         """
+        # print("cls:", cls)
+        # print("cls.device_xml_dir", cls.device_xml_dir)
+        # print("cls.xml_description_fname", cls.xml_description_fname)
+        # print("cls.pkg_path()", cls.pkg_path("."))
         return cls.pkg_path(cls.device_xml_dir) / cls.xml_description_fname
 
     @classmethod
     def add_device_sdos_from_esi(cls):
         """Read device SDOs from ESI file and add to configuration."""
+        # print("EtherCATDevice:  add_device_sdos_from_esi")
         sdo_data = dict()
         dev_esi_paths = set()
         for dev in cls.get_model():
+            # model_id = dev.device_type_key()
             esi_path = dev.xml_description_path()
             if esi_path in dev_esi_paths:
+                # print(f"Skipping duplicate ESI {esi_path}")
+                # assert model_id in sdo_data
                 continue
             dev_esi_paths.add(esi_path)
             dev_sdo_data = dev.config_class.get_device_sdos_from_esi(esi_path)
+            # print(f"Reading ESI {esi_path} for model_id {model_id}")
+            # print("dev_sdo_data.keys():", list(dev_sdo_data.keys()))
+            # print("dev_sdo_data:", dev_sdo_data)
             sdo_data.update(dev_sdo_data)
+            # assert model_id in sdo_data
+            # print(
+            #     "add_device_sdos_from_esi model_id",
+            #     model_id,
+            #     "sdo_data.keys()",
+            #     sdo_data.keys(),
+            # )
+            # print(
+            #     "add_device_sdos_from_esi sdo_data[model_id].keys()",
+            #     sdo_data[model_id].keys(),
+            # )
         cls.add_device_sdos(sdo_data)
 
 
@@ -84,11 +106,13 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
 
     @classmethod
     def munge_sdo_data(cls, sdo_data):
+        # print("ethercat munge_sdo_data cls:", cls)
         res = dict()
         for model_id, sdos in sdo_data.items():
             model_sdos = res[model_id] = dict()
             for ix, sdo in sdos.items():
                 model_sdos[ix] = sdo
+        # print("ethercat munge_sdo_data res:", res)
         return res
 
     @classmethod
@@ -100,8 +124,11 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
         from EtherCAT ESI description file and pass with sim device data
         to parent class's method.
         """
+        # print("EtherCATSimDevice:  init_sim")
         cls.add_device_sdos_from_esi()
+        # print("EtherCATSimDevice device_data", device_data)
         device_data = cls.munge_device_data(device_data)
+        # print(f"CiA301SimDevice init_sim device_data:", device_data)
         cls.config_class.init_sim(device_data=device_data)
 
     @classmethod
@@ -115,12 +142,24 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
         device.
         """
 
+        # print("EtherCATSimDevice:  add_device_sdos")
+        # print("sdo_data.keys() before", list(sdo_data.keys()))
         for model_cls in cls.get_model():
+            # print(
+            #    f"Looking for model {model_cls}, {model_cls.device_type_key()}"
+            # )
             for device_cls in model_cls.__mro__:
                 if "product_code" not in device_cls.__dict__:
+                    # print(f"  skipping {device_cls}:  no product_code")
                     continue
                 model_id = device_cls.device_type_key()
+                # print("  device_cls + model_id", device_cls, model_id)
                 if model_id in sdo_data:
                     sdo_data[model_cls.device_type_key()] = sdo_data[model_id]
+                    # print("      got it:", model_id)
                     break
+            # else:
+            #     print("      don't got it")
+        # print("sdo_data keys after", repr(sdo_data.keys()))
+        # print("ethercat device add_device_sdos sdo_data after", sdo_data)
         super().add_device_sdos(sdo_data)

@@ -28,11 +28,15 @@ class TestHWDeviceMgr(BaseMgrTestClass, _TestDevice):
         )
         self.obj.init(mgr_config=mgr_config)
         self.obj.init_devices(device_config=device_config)
+        # print("device_config", device_config)
+        # print("obj.devices:", self.obj.devices)
         yield self.obj
 
     drive_key_re = re.compile(r"^drive_([x0-9])_(.*)$")
 
     def test_init(self, obj, all_device_data):
+        # print("obj.device_base_class.config_class.command_class.sim_device_data",obj.device_base_class.config_class.command_class.sim_device_data)
+        # print("all_device_data", all_device_data)
         print(obj.device_base_class.scan_devices(sim=True))
         assert len(obj.devices) > 0
         assert len(obj.devices) == len(obj.scan_devices(sim=True))

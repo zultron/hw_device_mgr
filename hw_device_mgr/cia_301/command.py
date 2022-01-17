@@ -54,19 +54,29 @@ class CiA301SimCommand(CiA301Command):
     @classmethod
     def init_sim(cls, device_data=None, sdo_data=None):
         # Save & index device data
+        # print("CiA301SimCommand init_sim")
+        # print("CiA301SimCommand sdo_data.keys()", sdo_data.keys())
         assert sdo_data
         cls.init_device_data(device_data)
         cls.sim_sdo_data = sdo_data
+        # print("command class sim_device_data:", cls.sim_device_data)
+        # print("command class sim_sdo_data:", cls.sim_sdo_data)
         cls.init_sim_sdo_values()
 
     @classmethod
     def init_device_data(cls, device_data):
+        # print("cls.sim_device_data", cls.sim_device_data)
+        # assert not cls.sim_device_data  # Config sanity check
+        # print("device_data", device_data)
         cls.sim_device_data.clear()
         cls.sim_device_data.update(device_data)
+        # print("cls.sim_device_data", cls.sim_device_data)
 
     @classmethod
     def init_sim_sdo_values(cls):
+        # print("cls.sim_sdo_data", cls.sim_sdo_data)
         for addr, dd in cls.sim_device_data.items():
+            # print("dd", dd)
             sdo_vals = cls.sim_sdo_values[addr] = dict()
             dd_params = dd.get("params", dict())
             for ix, sdo in cls.sim_sdo_data[addr].items():
@@ -90,8 +100,13 @@ class CiA301SimCommand(CiA301Command):
         return res
 
     def upload(self, address=None, index=None, subindex=0, datatype=None):
+        # print(self.sim_sdo_data)
+        # print(address)
+        # print(index, subindex)
         sdo = self.sim_sdo_data[address][index, subindex]
+        # print("self.sim_sdo_values", self.sim_sdo_values)
         val = self.sim_sdo_values[address][index, subindex]
+        # print("val:", val)
         assert datatype is sdo.data_type
         return val
 

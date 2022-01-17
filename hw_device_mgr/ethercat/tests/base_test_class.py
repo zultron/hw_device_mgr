@@ -31,6 +31,7 @@ class BaseEtherCATTestClass(BaseCiA301TestClass):
     )
 
     def init_sim(self):
+        # print("BaseEtherCATTestClass:  init_sim")
         device_class = getattr(self, "device_base_class", self.device_class)
         assert not getattr(self, "_sim_initialized", False)  # Run once only
         device_class.clear_devices()

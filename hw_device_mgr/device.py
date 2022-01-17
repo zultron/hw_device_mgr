@@ -177,6 +177,7 @@ class Device(abc.ABC):
         if not cls.name:
             # Not a concrete device; skip
             cls._registry_log.append(("no_name", cls))
+            # print(cls._registry_log[-1])
             return  # Not a model
         key = cls.device_type_key()
         for supercls in cls.category_classes():
@@ -187,6 +188,9 @@ class Device(abc.ABC):
             if "_model_registry" not in supercls.__dict__:
                 supercls._model_registry = dict()
             if not cls.allow_rereg and key in supercls._model_registry:
+                # print(f"allow_rereg:  {cls.allow_rereg}")
+                # print("key:", key)
+                # print("log:", cls._registry_log)
                 raise KeyError(
                     f"Cannot re-register {cls} {key} as {supercls.category}"
                 )
@@ -194,6 +198,7 @@ class Device(abc.ABC):
             cls._registry_log.append(
                 ("cat", cls.name, key, category, cls, supercls)
             )
+            # print(cls._registry_log[-1])
 
     @classmethod
     def category_classes(cls, model_cls=None):
@@ -203,6 +208,11 @@ class Device(abc.ABC):
 
     @classmethod
     def category_cls(cls, category=None):
+        # print("category:", category)
+        # print("cls.category:", cls.category)
+        # print("registry keys:", list(cls._category_registry.keys()))
+        # print("registry:", cls._category_registry)
+        # print("registry log:", cls._registry_log)
         return cls._category_registry.get(category or cls.category, None)
 
     @classmethod
@@ -252,12 +262,28 @@ class Device(abc.ABC):
 class SimDevice(Device):
     @classmethod
     def device_category_class(cls, category):
+        # print("category", category)
+        # print("cls", cls)
+        # print(
+        #     "cls.get_model(category=category)\n    ",
+        #     "\n     ".join(
+        #         c.__name__ for c in cls.get_model(category=category)
+        #     ),
+        # )
+        # print(
+        #     "cls.get_model()\n    ",
+        #     "\n     ".join(c.__name__ for c in cls.get_model()),
+        # )
         category_classes = (
             # Intersection of devices in both sim_devices.yaml
             # "category" and the present class
             cls.get_model(category=category)
             & cls.get_model()
         )
+        # print(
+        #     "category_classes\n    ",
+        #     "\n     ".join(c.__name__ for c in category_classes),
+        # )
         assert len(category_classes) <= 1 or cls in category_classes
         return category_classes.pop() if category_classes else None
 
@@ -265,9 +291,13 @@ class SimDevice(Device):
 
     @classmethod
     def init_sim(cls, device_data=dict()):
+        # print("device.py init_sim()")
         cls._device_data.clear()
+        # print("device_data:", device_data)
+        # print("cls._device_data:", cls._device_data)
         for d in device_data:
             # Sanity check:  no overwrites
+            # print("device_data:", d)
             assert d["address"] not in cls._device_data
             cls._device_data[d["address"]] = d
 
@@ -277,5 +307,6 @@ class SimDevice(Device):
         for data in cls._device_data.values():
             dev_type = cls.device_category_class(data["category"])
             dev = dev_type.get_device(address=data["address"], **kwargs)
+            # print(f"scan_devices:  found {dev}")
             res.append(dev)
         return res

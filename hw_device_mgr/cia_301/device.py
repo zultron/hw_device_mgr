@@ -97,11 +97,15 @@ class CiA301Device(Device):
         # per-model_id SDO data
         res = dict()
         for category, sd in sdo_data.items():
+            # print("category:", category)
+            # print("sd:", sd)
             device_cls = cls.device_category_class(category)
             if device_cls is None:
                 continue
             model_id = device_cls.device_type_key()
+            # print("model_id:", model_id)
             res[model_id] = sd
+        # print("munge_sdo_data res:", res)
         return res
 
     @classmethod
@@ -112,6 +116,7 @@ class CiA301Device(Device):
         Pass to the `Config` class the information needed to configure
         SDOs for this `model_id`.
         """
+        # print("CiA301Device:  add_device_sdos")
         cls.config_class.add_device_sdos(cls.munge_sdo_data(sdo_data))
 
     @classmethod
@@ -156,14 +161,19 @@ class CiA301SimDevice(CiA301Device, SimDevice):
         # used in tests, where the same device config file is reused
         # for different classes with different model IDs.
         uint16 = cls.data_type_class.by_shared_name("uint16")
+        # print("config:", config)
         config_cooked = list()
         for c in config:
+            # print("c:", c)
+            # print(c["category"])
+            # print(cls.get_model(category=c["category"]), cls.get_model())
             if "category" not in c:
                 model_id = (uint16(c["vendor_id"]), uint16(c["product_code"]))
                 c["vendor_id"], c["product_code"] = model_id
                 device_cls = cls.get_model(key=model_id, category="all")
                 c["category"] = device_cls.category
                 config_cooked.append(c)
+                # print("c:", c)
                 continue
             device_cls = cls.device_category_class(c["category"])
             if device_cls is None:
@@ -196,6 +206,9 @@ class CiA301SimDevice(CiA301Device, SimDevice):
 
     @classmethod
     def init_sim(cls, device_data=dict(), sdo_data=dict()):
+        # print("CiA301SimDevice:  init_sim")
         cls.add_device_sdos(sdo_data)
+        # print("device_data", device_data)
         device_data = cls.munge_device_data(device_data)
+        # print(f"CiA301SimDevice init_sim device_data:", device_data)
         cls.config_class.init_sim(device_data=device_data)
