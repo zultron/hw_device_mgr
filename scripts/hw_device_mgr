@@ -8,12 +8,13 @@ import sys
 import os
 
 if __name__ == "__main__":
-    sim = os.environ.get("USE_SIM", "0").lower() in ("1", "true")
+    argv = list(sys.argv[1:])  # Knock off executable name
+    sim = "--sim" in argv
     if sim:
         mgr = SimROSEtherCATHWDeviceMgr(sim=True)
     else:
         mgr = ROSHALHWDeviceMgr()
-    mgr.init(sys.argv)
+    mgr.init(argv)
     if sim:
         mgr.init_sim()
     mgr.init_devices()
