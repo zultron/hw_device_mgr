@@ -237,9 +237,6 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         return self.fsm_check_command(e)
 
     def on_enter_stop_1(self, e):
-        # Zero out command & feedback differences to give operator
-        # confidence turning on machine
-        e.reset = True
         self.fsm_set_required_status_word_flags(e, all_clear=True)
         return self.fsm_set_drive_state_cmd(e, "SWITCH ON DISABLED")
 
@@ -247,7 +244,6 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         return self.fsm_check_drive_goal_state(e)
 
     def on_enter_stop_complete(self, e):
-        e.reset = False
         self.fsm_finalize_command(e)
 
     #
