@@ -314,7 +314,7 @@ class TestDevice(BaseTestClass):
         with open(fpath(test_cases_yaml)) as f:
             yaml = ruamel.yaml.YAML()
             test_cases = yaml.load(f)
-        print(f"Read test cases from {test_cases_yaml}")
+        print(f"Read test cases from {fpath(test_cases_yaml)}")
 
         for test_case in test_cases:
             self.read_update_write_loop(test_case)

@@ -152,15 +152,9 @@
     drive_x_transition:  null
   command_in:
     state_log:  "Automatic transition from init_complete state"
-    reset:  True
-  command_out:
-    reset:  1
 - desc:  "Init:  Complete"
   command_in:
     command_complete:  True
-    reset:  False
-  command_out:
-    reset:  0
 - desc:  "Init:  Hold state"
 
 #
@@ -756,10 +750,8 @@
     drive_x_goal_reason:  state QUICK STOP ACTIVE != SWITCH ON DISABLED
   command_in:
     state_log:  Automatic transition from home_complete state
-    reset:  True
   command_out:
     drive_x_control_word:  0x0000  # SWITCH ON DISABLED
-    reset:  1
   sim_feedback:
     drive_x_status_word:  0x0050  # SWITCH ON DISABLED + VOLTAGE_ENABLED
 - desc:  "Home:  402 state machine transition 12"
@@ -773,9 +765,6 @@
     drive_x_goal_reason:  Reached
   command_in:
     command_complete:  True
-    reset:  False
-  command_out:
-    reset:  0
 
 - desc:  "Home:  Hold SWITCH ON DISABLED x1"
   feedback_out:
