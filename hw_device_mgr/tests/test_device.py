@@ -52,12 +52,12 @@ class TestDevice(BaseTestClass):
         print(f"Registry log:\n{pformat(self.device_class._registry_log)}")
 
         for model_cls in self.device_model_classes:
-            key = model_cls.device_type_key()
+            model_id = model_cls.device_model_id()
             print(f"model_cls:  {model_cls}")
-            print(f"model_cls key:  {key}")
+            print(f"model_cls model_id:  {model_id}")
             print(f"dev cls category: {device_cls.category}")
             print(f"dev cls registry:\n{pformat(device_cls._model_registry)}")
-            assert key in device_cls._model_registry
+            assert model_id in device_cls._model_registry
             for category_cls in device_cls.__mro__:
                 if not hasattr(category_cls, "category"):
                     break  # Parent class of `Device`
@@ -65,14 +65,14 @@ class TestDevice(BaseTestClass):
                 print(f"category: {category_cls.category}")
                 print(f"registry:\n{pformat(registry)}")
                 if not model_cls.allow_rereg:
-                    assert category_cls.get_model(key) is model_cls
+                    assert category_cls.get_model(model_id) is model_cls
                     category = category_cls.category
-                    assert model_cls.get_model(key, category) is model_cls
+                    assert model_cls.get_model(model_id, category) is model_cls
                 if "category" not in category_cls.__dict__:
                     continue
-                assert key in registry
+                assert model_id in registry
                 if not model_cls.allow_rereg:
-                    assert registry[key] == model_cls
+                    assert registry[model_id] == model_cls
 
     def test_scan_devices(self, device_cls, all_device_data):
         devs = device_cls.scan_devices(sim=self.sim)

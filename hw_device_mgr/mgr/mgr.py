@@ -21,7 +21,7 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
     name = "hw_device_mgr"
 
     @classmethod
-    def device_type_key(cls):
+    def device_model_id(cls):
         return cls.name
 
     feedback_in_defaults = dict(state_cmd=0, quick_stop=0, reset=0)

@@ -118,8 +118,8 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
             for device_cls in model_cls.__mro__:
                 if "product_code" not in device_cls.__dict__:
                     continue
-                model_id = device_cls.device_type_key()
+                model_id = device_cls.device_model_id()
                 if model_id in sdo_data:
-                    sdo_data[model_cls.device_type_key()] = sdo_data[model_id]
+                    sdo_data[model_cls.device_model_id()] = sdo_data[model_id]
                     break
         super().add_device_sdos(sdo_data)

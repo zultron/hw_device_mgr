@@ -47,7 +47,7 @@ class BaseTestClass:
 
             # Set sparse keys
             updates = dict(
-                model_id=device_cls.device_type_key(),
+                model_id=device_cls.device_model_id(),
                 name=device_cls.name,
                 address=dev["position"],
             )

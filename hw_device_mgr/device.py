@@ -157,12 +157,13 @@ class Device(abc.ABC):
         cls._register_model()
 
     @classmethod
-    def device_type_key(cls):
+    def device_model_id(cls):
         """
         Return unique device model identifier.
 
-        A unique key by which a detected device's model class may be
-        looked up, e.g. `(manufacturer_id, model)`.
+        A unique ID that may be generated from bus scan results by which a
+        detected device's model class may be looked up, e.g. `(manufacturer_id,
+        model)`.
         """
         if not hasattr(cls, "model_id"):
             return None
@@ -178,11 +179,11 @@ class Device(abc.ABC):
             # Not a concrete device; skip
             cls._registry_log.append(("no_name", cls))
             return  # Not a model
-        key = cls.device_type_key()
+        key = cls.device_model_id()
         for supercls in cls.category_classes():
             category = supercls.category
             # Ensure category is registered
-            supercls._category_registry.setdefault(category, supercls)
+            cls._category_registry.setdefault(category, supercls)
             # Check & register device type
             if "_model_registry" not in supercls.__dict__:
                 supercls._model_registry = dict()
@@ -223,11 +224,11 @@ class Device(abc.ABC):
     _address_registry = dict()
 
     @classmethod
-    def get_device(cls, address=None, sim=False, **kwargs):
+    def get_device(cls, address=None, **kwargs):
         registry = cls._address_registry.setdefault(cls.name, dict())
         if address in registry:
             return registry[address]
-        device_obj = cls(address=address, sim=sim, **kwargs)
+        device_obj = cls(address=address, **kwargs)
         registry[address] = device_obj
         return device_obj
 

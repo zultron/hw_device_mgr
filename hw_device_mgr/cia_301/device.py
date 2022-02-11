@@ -35,7 +35,7 @@ class CiA301Device(Device):
         super().__init__(address=address, **kwargs)
 
     @classmethod
-    def device_type_key(cls):
+    def device_model_id(cls):
         """
         Return unique device model identifier.
 
@@ -49,7 +49,7 @@ class CiA301Device(Device):
 
     @property
     def model_id(self):
-        return self.device_type_key()
+        return self.device_model_id()
 
     @classmethod
     def set_device_config(cls, device_config):
@@ -101,7 +101,7 @@ class CiA301Device(Device):
             device_cls = cls.device_category_class(category)
             if device_cls is None:
                 continue
-            model_id = device_cls.device_type_key()
+            model_id = device_cls.device_model_id()
             res[model_id] = sd
         return res
 

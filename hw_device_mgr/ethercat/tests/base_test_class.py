@@ -49,6 +49,6 @@ class BaseEtherCATTestClass(BaseCiA301TestClass):
             for clone_id, cls in zip(
                 self.device_model_sdo_clone, self.device_model_classes
             ):
-                sdos[cls.device_type_key()] = sdos[clone_id]
+                sdos[cls.device_model_id()] = sdos[clone_id]
         device_class.init_sim(device_data=dev_data)
         self._sim_initialized = True
