@@ -15,7 +15,7 @@ class BaseTestClass:
     """Base test class providing fixtures for use with `bogus_devices`."""
 
     # Device scan data; for test fixture
-    sim_device_data_yaml = "tests/bogus_devices/sim_devices.yaml"
+    sim_device_data_yaml = "tests/sim_devices.yaml"
 
     # Data types
     # Classes under test in this module
