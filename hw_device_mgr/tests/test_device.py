@@ -57,11 +57,14 @@ class TestDevice(BaseTestClass):
             print(f"model_cls model_id:  {model_id}")
             print(f"dev cls category: {device_cls.category}")
             print(f"dev cls registry:\n{pformat(device_cls._model_registry)}")
-            assert model_id in device_cls._model_registry
+            assert device_cls.category in device_cls._model_registry
+            model_registry = device_cls._model_registry[device_cls.category]
+            assert model_id in model_registry
             for category_cls in device_cls.__mro__:
                 if not hasattr(category_cls, "category"):
                     break  # Parent class of `Device`
-                registry = category_cls._model_registry
+                assert category_cls.category in device_cls._model_registry
+                registry = device_cls._model_registry[category_cls.category]
                 print(f"category: {category_cls.category}")
                 print(f"registry:\n{pformat(registry)}")
                 if not model_cls.allow_rereg:

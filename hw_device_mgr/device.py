@@ -172,6 +172,9 @@ class Device(abc.ABC):
     # Record class registrations; for debugging registry
     _registry_log = list()
 
+    # { category : { model_id : device_class } }
+    _model_registry = dict()
+
     @classmethod
     def _register_model(cls):
         # Register model in all parent categories
@@ -179,21 +182,20 @@ class Device(abc.ABC):
             # Not a concrete device; skip
             cls._registry_log.append(("no_name", cls))
             return  # Not a model
-        key = cls.device_model_id()
+        model_id = cls.device_model_id()
         for supercls in cls.category_classes():
             category = supercls.category
             # Ensure category is registered
             cls._category_registry.setdefault(category, supercls)
             # Check & register device type
-            if "_model_registry" not in supercls.__dict__:
-                supercls._model_registry = dict()
-            if not cls.allow_rereg and key in supercls._model_registry:
+            model_registry = cls._model_registry.setdefault(category, dict())
+            if not cls.allow_rereg and model_id in model_registry:
                 raise KeyError(
-                    f"Cannot re-register {cls} {key} as {supercls.category}"
+                    f"Cannot reregister {cls} {model_id} as {supercls.category}"
                 )
-            supercls._model_registry[key] = cls
+            model_registry[model_id] = cls
             cls._registry_log.append(
-                ("cat", cls.name, key, category, cls, supercls)
+                ("cat", cls.name, model_id, category, cls, supercls)
             )
 
     @classmethod
@@ -208,14 +210,14 @@ class Device(abc.ABC):
 
     @classmethod
     def get_model(cls, key=None, category=None):
-        category_cls = cls.category_cls(category)
-        if category_cls is None:
+        if category not in cls._model_registry:
             return None
-        if key is None:  # Return list of all model classes
-            return set(category_cls._model_registry.values())
-        if key not in category_cls._model_registry:
+        model_registry = cls._model_registry[category]
+        if key is None:  # Return set of all model classes
+            return set(model_registry.values())
+        if key not in model_registry:
             return None
-        return category_cls._model_registry[key]
+        return model_registry[key]
 
     ########################################
     # Device identifier registry and instance factory
