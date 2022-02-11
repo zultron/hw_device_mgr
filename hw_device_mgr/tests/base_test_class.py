@@ -80,7 +80,7 @@ class BaseTestClass:
     @pytest.fixture
     def all_device_data(self, device_cls):
         # All device data in a dict
-        yield device_cls._device_data
+        yield device_cls._sim_device_data
 
     def pytest_generate_tests(self, metafunc):
         # Dynamic test parametrization

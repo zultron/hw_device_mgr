@@ -261,20 +261,20 @@ class SimDevice(Device):
         assert len(category_classes) <= 1
         return category_classes.pop() if category_classes else None
 
-    _device_data = dict()
+    _sim_device_data = dict()
 
     @classmethod
     def init_sim(cls, device_data=dict()):
-        cls._device_data.clear()
+        cls._sim_device_data.clear()
         for d in device_data:
             # Sanity check:  no overwrites
-            assert d["address"] not in cls._device_data
-            cls._device_data[d["address"]] = d
+            assert d["address"] not in cls._sim_device_data
+            cls._sim_device_data[d["address"]] = d
 
     @classmethod
     def scan_devices(cls, **kwargs):
         res = list()
-        for data in cls._device_data.values():
+        for data in cls._sim_device_data.values():
             dev_type = cls.device_category_class(data["category"])
             dev = dev_type.get_device(address=data["address"], **kwargs)
             res.append(dev)

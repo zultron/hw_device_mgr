@@ -9,7 +9,7 @@ class BogusDevice(SimDevice):
     @classmethod
     def load_test_data(cls, data):
         """Side-load bus scan data."""
-        cls._device_data = data
+        cls._sim_device_data = data
 
 
 # Create several categories to group drives into
