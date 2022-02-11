@@ -178,9 +178,9 @@ class CiA301SimDevice(CiA301Device, SimDevice):
         super().set_device_config(config_cooked)
 
     @classmethod
-    def munge_device_data(cls, device_data):
+    def munge_sim_device_data(cls, sim_device_data):
         res = dict()
-        for dd in device_data:
+        for dd in sim_device_data:
             model_id = dd.get("model_id", (dd["vendor_id"], dd["product_code"]))
             model_id = cls.config_class.format_model_id(model_id)
             device_cls = cls.get_model(model_id)
@@ -197,7 +197,7 @@ class CiA301SimDevice(CiA301Device, SimDevice):
         return res
 
     @classmethod
-    def init_sim(cls, device_data=dict(), sdo_data=dict()):
+    def init_sim(cls, sim_device_data=dict(), sdo_data=dict()):
         cls.add_device_sdos(sdo_data)
-        device_data = cls.munge_device_data(device_data)
-        cls.config_class.init_sim(device_data=device_data)
+        sim_device_data = cls.munge_sim_device_data(sim_device_data)
+        cls.config_class.init_sim(sim_device_data=sim_device_data)

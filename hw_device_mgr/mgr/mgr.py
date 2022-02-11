@@ -664,6 +664,6 @@ class SimHWDeviceMgr(HWDeviceMgr, SimDevice):
     device_base_class = CiA402SimDevice
     device_classes = CiA402SimDevice.get_model()
 
-    def init_sim(self, device_data=dict()):
-        assert device_data
-        self.device_base_class.init_sim(device_data=device_data)
+    def init_sim(self, sim_device_data=dict()):
+        assert sim_device_data
+        self.device_base_class.init_sim(sim_device_data=sim_device_data)

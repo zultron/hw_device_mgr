@@ -104,12 +104,12 @@ class SimROSHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
     name = "sim_ros_hw_device_mgr"
 
     def init_sim(self):
-        device_data_path = self.get_param("device_data_path")
-        assert device_data_path, "No 'device_data_path' param defined"
+        sim_device_data_path = self.get_param("sim_device_data_path")
+        assert sim_device_data_path, "No 'sim_device_data_path' param defined"
         assert os.path.exists(
-            device_data_path
-        ), f"Device data path doesn't exist:  '{device_data_path}'"
-        self.logger.info(f"Reading sim device config from {device_data_path}")
-        with open(device_data_path, "r") as f:
-            device_data = yaml.safe_load(f)
-        super().init_sim(device_data=device_data)
+            sim_device_data_path
+        ), f"Device data path doesn't exist:  '{sim_device_data_path}'"
+        self.logger.info(f"Reading sim device config from {sim_device_data_path}")
+        with open(sim_device_data_path, "r") as f:
+            sim_device_data = yaml.safe_load(f)
+        super().init_sim(sim_device_data=sim_device_data)

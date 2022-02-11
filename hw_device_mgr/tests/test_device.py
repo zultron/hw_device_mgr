@@ -87,9 +87,9 @@ class TestDevice(BaseTestClass):
     #
 
     @pytest.fixture
-    def obj(self, device_cls, device_data):
-        self.device_data = device_data
-        self.obj = device_cls(address=device_data["address"], sim=self.sim)
+    def obj(self, device_cls, sim_device_data):
+        self.sim_device_data = sim_device_data
+        self.obj = device_cls(address=sim_device_data["address"], sim=self.sim)
         self.obj.init()
         yield self.obj
 

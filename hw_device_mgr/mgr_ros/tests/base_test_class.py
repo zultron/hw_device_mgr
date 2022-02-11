@@ -41,12 +41,12 @@ class BaseROSMgrTestClass(BaseMgrTestClass):
         self.rosparams.update(hdm_params)
 
     @pytest.fixture
-    def device_data_path(self, tmp_path, all_device_data, mock_rclpy):
+    def sim_device_data_path(self, tmp_path, all_device_data, mock_rclpy):
         # Clean data types from device data to dump into YAML file &
-        # set `device_data_path` ROS param
-        device_data = [dd.copy() for dd in all_device_data.values()]
-        assert device_data
-        for dd in device_data:
+        # set `sim_device_data_path` ROS param
+        sim_device_data = [dd.copy() for dd in all_device_data.values()]
+        assert sim_device_data
+        for dd in sim_device_data:
             dd["model_id"] = tuple(int(i) for i in dd["model_id"])
             dd["vendor_id"] = int(dd["vendor_id"])
             dd["product_code"] = int(dd["product_code"])
@@ -54,8 +54,8 @@ class BaseROSMgrTestClass(BaseMgrTestClass):
             dd.pop("model_id")
         tmpfile = tmp_path / "sim_devices.yaml"
         with open(tmpfile, "w") as f:
-            f.write(yaml.safe_dump(device_data))
-        self.rosparams["device_data_path"] = tmpfile
+            f.write(yaml.safe_dump(sim_device_data))
+        self.rosparams["sim_device_data_path"] = tmpfile
         print(f"Cleaned sim device data written to {tmpfile}")
         yield tmpfile
 

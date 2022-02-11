@@ -52,17 +52,17 @@ class CiA301SimCommand(CiA301Command):
     sim_sdo_values = dict()
 
     @classmethod
-    def init_sim(cls, device_data=None, sdo_data=None):
+    def init_sim(cls, sim_device_data=None, sdo_data=None):
         # Save & index device data
         assert sdo_data
-        cls.init_device_data(device_data)
+        cls.init_sim_device_data(sim_device_data)
         cls.sim_sdo_data = sdo_data
         cls.init_sim_sdo_values()
 
     @classmethod
-    def init_device_data(cls, device_data):
+    def init_sim_device_data(cls, sim_device_data):
         cls.sim_device_data.clear()
-        cls.sim_device_data.update(device_data)
+        cls.sim_device_data.update(sim_device_data)
 
     @classmethod
     def init_sim_sdo_values(cls):

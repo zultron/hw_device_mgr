@@ -92,7 +92,7 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
         return res
 
     @classmethod
-    def init_sim(cls, device_data=dict()):
+    def init_sim(cls, sim_device_data=dict()):
         """
         Configure device, config, command for sim EtherCAT devices.
 
@@ -101,8 +101,8 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
         to parent class's method.
         """
         cls.add_device_sdos_from_esi()
-        device_data = cls.munge_device_data(device_data)
-        cls.config_class.init_sim(device_data=device_data)
+        sim_device_data = cls.munge_sim_device_data(sim_device_data)
+        cls.config_class.init_sim(sim_device_data=sim_device_data)
 
     @classmethod
     def add_device_sdos(cls, sdo_data):

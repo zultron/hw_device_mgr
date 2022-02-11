@@ -15,7 +15,7 @@ class BaseTestClass:
     """Base test class providing fixtures for use with `bogus_devices`."""
 
     # Device scan data; for test fixture
-    device_data_yaml = "tests/bogus_devices/sim_devices.yaml"
+    sim_device_data_yaml = "tests/bogus_devices/sim_devices.yaml"
 
     # Data types
     # Classes under test in this module
@@ -37,10 +37,15 @@ class BaseTestClass:
         return (p, data) if return_path else data
 
     @classmethod
-    def munge_device_data(cls, device_data):
+    def munge_sim_device_data(cls, sim_device_data):
         """Massage device test data for usability."""
+
+        # tmpfile = tmp_path / "sim_device.yaml"
+        # with open(tmpfile, "w") as f:
+        #     f.write(yaml.safe_dump(sim_device_data))
+
         # Locate device model class
-        for dev in device_data:
+        for dev in sim_device_data:
             device_cls = cls.device_class.device_category_class(dev["category"])
             if device_cls is None:
                 continue
@@ -53,22 +58,22 @@ class BaseTestClass:
             )
             dev.update(updates)
 
-        return device_data
+        return sim_device_data
 
     def init_sim(self):
         if getattr(self, "_sim_initialized", False):
             return
         self.device_class.clear_devices()
         self.dev_data_path, dev_data = self.load_yaml(
-            self.device_data_yaml, True
+            self.sim_device_data_yaml, True
         )
-        dev_data = self.munge_device_data(dev_data)
-        self.device_class.init_sim(device_data=dev_data)
+        dev_data = self.munge_sim_device_data(dev_data)
+        self.device_class.init_sim(sim_device_data=dev_data)
         self._sim_initialized = True
 
     @classmethod
-    def load_device_data_yaml(cls):
-        return cls.load_yaml(cls.device_data_yaml)
+    def load_sim_device_data_yaml(cls):
+        return cls.load_yaml(cls.sim_device_data_yaml)
 
     @pytest.fixture
     def device_cls(self):
@@ -84,17 +89,17 @@ class BaseTestClass:
 
     def pytest_generate_tests(self, metafunc):
         # Dynamic test parametrization
-        # - device_data:  iterate through `device_data_yaml` list
-        if "device_data" not in metafunc.fixturenames:
+        # - sim_device_data:  iterate through `sim_device_data_yaml` list
+        if "sim_device_data" not in metafunc.fixturenames:
             return
 
-        path, device_data = self.load_yaml(self.device_data_yaml, True)
-        device_data = self.munge_device_data(device_data)
+        path, sim_device_data = self.load_yaml(self.sim_device_data_yaml, True)
+        sim_device_data = self.munge_sim_device_data(sim_device_data)
         vals, ids = (list(), list())
-        for dev in device_data:
+        for dev in sim_device_data:
             ids.append(f"{dev['name']}@{dev['address']}")
             vals.append(dev)
-        metafunc.parametrize("device_data", vals, ids=ids, scope="class")
+        metafunc.parametrize("sim_device_data", vals, ids=ids, scope="class")
 
     @pytest.fixture
     def fpath(self):

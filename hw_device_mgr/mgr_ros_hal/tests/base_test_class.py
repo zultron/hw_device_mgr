@@ -18,7 +18,7 @@ class BaseROSHALMgrTestClass(BaseLCEC402MgrTestClass, BaseROSMgrTestClass):
     device_model_classes = BogusHALROSHWDeviceMgr.device_classes
 
     device_config_yaml = _Test402Devices.device_config_yaml
-    device_data_yaml = _Test402Devices.device_data_yaml
+    sim_device_data_yaml = _Test402Devices.sim_device_data_yaml
     device_sdos_yaml = _Test402Devices.device_sdos_yaml
 
     device_model_sdo_clone = None

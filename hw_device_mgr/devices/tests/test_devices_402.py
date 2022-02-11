@@ -76,5 +76,5 @@ class Test402Devices(_TestLCEC402Device):
     device_model_sdo_clone = None
 
     device_config_yaml = "devices/tests/device_config.yaml"
-    device_data_yaml = "devices/tests/sim_devices.yaml"
+    sim_device_data_yaml = "devices/tests/sim_devices.yaml"
     device_sdos_yaml = "devices/tests/sim_sdo_data.yaml"

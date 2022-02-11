@@ -39,9 +39,9 @@ class BaseEtherCATTestClass(BaseCiA301TestClass):
         path, dev_conf = self.load_yaml(self.device_config_yaml, True)
         print(f"  loaded device_config from {path}")
         device_class.set_device_config(dev_conf)
-        path, dev_data = self.load_yaml(self.device_data_yaml, True)
-        dev_data = self.munge_device_data(dev_data)
-        print(f"  loaded device_data from {path}")
+        path, dev_data = self.load_yaml(self.sim_device_data_yaml, True)
+        dev_data = self.munge_sim_device_data(dev_data)
+        print(f"  loaded sim_device_data from {path}")
         device_class.add_device_sdos_from_esi()
         if self.device_model_sdo_clone:
             # Reuse ESI SDO data
@@ -50,5 +50,5 @@ class BaseEtherCATTestClass(BaseCiA301TestClass):
                 self.device_model_sdo_clone, self.device_model_classes
             ):
                 sdos[cls.device_model_id()] = sdos[clone_id]
-        device_class.init_sim(device_data=dev_data)
+        device_class.init_sim(sim_device_data=dev_data)
         self._sim_initialized = True

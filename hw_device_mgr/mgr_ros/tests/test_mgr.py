@@ -24,7 +24,7 @@ class TestROSHWDeviceMgr(BaseROSMgrTestClass, _TestHWDeviceMgr):
     ]
 
     @pytest.fixture
-    def obj(self, device_cls, device_config_path, device_data_path):
+    def obj(self, device_cls, device_config_path, sim_device_data_path):
         # init_sim() and init_devices() signatures changed, so can't
         # use parent test class obj fixture
         self.obj = device_cls(sim=self.sim)

@@ -265,9 +265,9 @@ class SimDevice(Device):
     _sim_device_data = dict()
 
     @classmethod
-    def init_sim(cls, device_data=dict()):
+    def init_sim(cls, sim_device_data=dict()):
         cls._sim_device_data.clear()
-        for d in device_data:
+        for d in sim_device_data:
             # Sanity check:  no overwrites
             assert d["address"] not in cls._sim_device_data
             cls._sim_device_data[d["address"]] = d
