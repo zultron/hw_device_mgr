@@ -1,7 +1,7 @@
 from ...device import EtherCATSimDevice
 from ....cia_402.tests.bogus_devices.device import (
     BogusCiA402DeviceCategory,
-    BogusV1CiA402ServoCategory,
+    BogusCiA402V1ServoCategory,
     BogusV2CiA402ServoCategory,
 )
 
@@ -18,7 +18,7 @@ class BogusEtherCAT402Device(EtherCATSimDevice, BogusCiA402DeviceCategory):
         self.params_volatile = not nv
 
 
-class BogusEtherCAT402Servo(BogusEtherCAT402Device, BogusV1CiA402ServoCategory):
+class BogusEtherCAT402Servo(BogusEtherCAT402Device, BogusCiA402V1ServoCategory):
     name = "bogo_ethercat_402_servo"
     product_code = 0xB0905032
 

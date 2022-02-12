@@ -1,7 +1,7 @@
 from ...device import LCECSimDevice
 from ....cia_402.tests.bogus_devices.device import (
     BogusCiA402DeviceCategory,
-    BogusV1CiA402ServoCategory,
+    BogusCiA402V1ServoCategory,
     BogusV2CiA402ServoCategory,
 )
 
@@ -12,7 +12,7 @@ class BogusLCEC402Device(LCECSimDevice, BogusCiA402DeviceCategory):
     vendor_id = 0xB090C0
 
 
-class BogusV1LCEC402Servo(BogusLCEC402Device, BogusV1CiA402ServoCategory):
+class BogusV1LCEC402Servo(BogusLCEC402Device, BogusCiA402V1ServoCategory):
     name = "bogo_v1_lcec_402_servo"
     product_code = 0xB0905062
 

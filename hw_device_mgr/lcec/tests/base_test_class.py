@@ -7,9 +7,9 @@ from ..command import LCECSimCommand
 from ..config import LCECSimConfig
 from .bogus_devices.device import (
     BogusLCECDevice,
-    BogusV1LCECServo,
+    BogusLCECV1Servo,
     BogusV2LCECServo,
-    BogusV1LCECIO,
+    BogusLCECV1IO,
 )
 
 
@@ -21,7 +21,7 @@ class BaseLCECTestClass(BaseEtherCATTestClass):
     command_class = LCECSimCommand
     config_class = LCECSimConfig
     device_class = BogusLCECDevice
-    device_model_classes = BogusV1LCECServo, BogusV2LCECServo, BogusV1LCECIO
+    device_model_classes = BogusLCECV1Servo, BogusV2LCECServo, BogusLCECV1IO
 
     @classmethod
     def lcec_data_type(cls, type_str):

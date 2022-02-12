@@ -1,9 +1,9 @@
 from ...device import HALPinDevice
 from ....cia_301.tests.bogus_devices.device import (
     BogusCiA301DeviceCategory,
-    BogusV1CiA301ServoCategory,
+    BogusCiA301V1ServoCategory,
     BogusV2CiA301ServoCategory,
-    BogusV1CiA301IOCategory,
+    BogusCiA301V1IOCategory,
 )
 
 
@@ -12,7 +12,7 @@ class BogusHALDevice(HALPinDevice, BogusCiA301DeviceCategory):
     vendor_id = 0xB090C0
 
 
-class BogusV1HALServo(BogusHALDevice, BogusV1CiA301ServoCategory):
+class BogusV1HALServo(BogusHALDevice, BogusCiA301V1ServoCategory):
     name = "bogo_v1_hal_servo"
     product_code = 0xB0905050
 
@@ -22,6 +22,6 @@ class BogusV2HALServo(BogusHALDevice, BogusV2CiA301ServoCategory):
     product_code = 0xB0905051
 
 
-class BogusV1HALIO(BogusHALDevice, BogusV1CiA301IOCategory):
+class BogusV1HALIO(BogusHALDevice, BogusCiA301V1IOCategory):
     name = "bogo_v1_hal_io"
     product_code = 0xB0901050
