@@ -5,14 +5,14 @@ from ...ethercat.tests.test_device_402 import (
 from .bogus_devices.device_402 import (
     BogusLCEC402Device,
     BogusLCEC402V1Servo,
-    BogusV2LCEC402Servo,
+    BogusLCEC402V2Servo,
 )
 
 
 class TestLCEC402Device(_TestLCECDevice, _TestEtherCAT402Device):
 
     device_class = BogusLCEC402Device
-    device_model_classes = (BogusLCEC402V1Servo, BogusV2LCEC402Servo)
+    device_model_classes = (BogusLCEC402V1Servo, BogusLCEC402V2Servo)
 
     expected_mro = [
         "BogusLCEC402Device",

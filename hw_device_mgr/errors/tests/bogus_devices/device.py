@@ -15,16 +15,16 @@ class BogusErrorDevice(ErrorDevice, BogusDevice):
         return list()
 
 
-class BogusV1ErrorServo(BogusErrorDevice, BogusV1ServoDevice):
+class BogusErrorV1Servo(BogusErrorDevice, BogusV1ServoDevice):
     name = "bogus_v1_error_servo"
     model_id = 0xB0905041
 
 
-class BogusV2ErrorServo(BogusErrorDevice, BogusV2ServoDevice):
+class BogusErrorV2Servo(BogusErrorDevice, BogusV2ServoDevice):
     name = "bogus_v2_error_servo"
     model_id = 0xB0905042
 
 
-class BogusV1ErrorIO(BogusErrorDevice, BogusV1IODevice):
+class BogusErrorV1IO(BogusErrorDevice, BogusV1IODevice):
     name = "bogus_v1_error_io"
     model_id = 0xB0901041
