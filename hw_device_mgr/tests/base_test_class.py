@@ -33,10 +33,6 @@ class BaseTestClass:
     test_io_devices = True
 
     @classmethod
-    def irrelevant_test_category(cls, test_category):
-        return test_category == "bogus_v1_io" and not cls.test_io_devices
-
-    @classmethod
     def load_yaml(cls, fname, return_path=False):
         p = Path(__file__).parent.parent.joinpath(fname)
         with p.open() as f:
@@ -60,8 +56,6 @@ class BaseTestClass:
         # key (only used in tests).
         new_sim_device_data = list()
         for dev in sim_device_data:
-            if cls.irrelevant_test_category(dev["test_category"]):
-                continue  # Skip irrelevant data
             # Get device class from test_category key
             device_cls = cls.test_category_class(dev["test_category"])
             assert device_cls

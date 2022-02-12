@@ -6,8 +6,6 @@ class TestCiA402Device(BaseCiA402TestClass, _TestCiA301Device):
 
     expected_mro = [
         "BogusCiA402Device",
-        "CiA402SimDevice",
-        "CiA402Device",
         *_TestCiA301Device.expected_mro,
     ]
 

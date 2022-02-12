@@ -61,8 +61,6 @@ class BaseCiA301TestClass(BaseTestClass):
     def munge_device_config(cls, *, device_config):
         new_device_config = list()
         for conf in device_config:
-            if cls.irrelevant_test_category(conf["test_category"]):
-                continue  # Skip irrelevant data
             device_cls = cls.test_category_class(conf["test_category"])
             assert device_cls
             new_device_config.append(conf)
@@ -192,8 +190,6 @@ class BaseCiA301TestClass(BaseTestClass):
     def munge_sdo_data(cls, sdo_data, conv_sdos=False):
         new_sdo_data = dict()
         for test_category, old_sdos in sdo_data.items():
-            if cls.irrelevant_test_category(test_category):
-                continue  # Skip irrelevant data
             device_cls = cls.test_category_class(test_category)
             assert device_cls
             sdos = new_sdo_data[device_cls.name] = dict()

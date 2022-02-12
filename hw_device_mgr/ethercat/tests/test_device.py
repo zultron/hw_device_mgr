@@ -8,9 +8,7 @@ class TestEtherCATDevice(BaseEtherCATTestClass, _TestCiA402Device):
         "BogusEtherCATDevice",
         "EtherCATSimDevice",
         "EtherCATDevice",
-        # Knock off 'BogusCiA402Device', 'CiA402SimDevice', 'CiA402Device'
-        # for combined CiA 301 + 402 tests
-        *_TestCiA402Device.expected_mro[3:],
+        *_TestCiA402Device.expected_mro,
     ]
 
     def test_xml_description_path(self):
