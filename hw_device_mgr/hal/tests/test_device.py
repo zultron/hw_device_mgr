@@ -1,22 +1,17 @@
 import pytest
 from .base_test_class import BaseHALTestClass
-from ...cia_301.tests.test_device import TestCiA301Device as _TestCiA301Device
+from ...cia_402.tests.test_device import TestCiA402Device as _TestCiA402Device
 from pprint import pformat
 
 
-class TestHALDevice(BaseHALTestClass, _TestCiA301Device):
+class TestHALDevice(BaseHALTestClass, _TestCiA402Device):
     halcomp_name = "hal_device"
 
     expected_mro = [
         "BogusHALDevice",
         "HALPinDevice",
-        "BogusCiA301DeviceCategory",
-        "CiA301SimDevice",
-        "CiA301Device",
-        "BogusDevice",
-        "SimDevice",
-        "Device",
-        "ABC",
+        # Add HALMixin near bottom of MRO
+        *_TestCiA402Device.expected_mro[:-1],
         "HALMixin",
         "object",
     ]
@@ -24,7 +19,7 @@ class TestHALDevice(BaseHALTestClass, _TestCiA301Device):
     @pytest.fixture
     def obj(self, sim_device_data, mock_halcomp):
         self.obj = self.device_model_cls(
-            address=sim_device_data["address"], sim=self.sim
+            address=sim_device_data["test_address"], sim=self.sim
         )
         self.obj.init(mock_halcomp)
         yield self.obj

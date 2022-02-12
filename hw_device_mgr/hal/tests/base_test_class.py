@@ -1,5 +1,5 @@
 import pytest
-from ...cia_301.tests.base_test_class import BaseCiA301TestClass
+from ...cia_402.tests.base_test_class import BaseCiA402TestClass
 from ..data_types import HALDataType
 from .bogus_devices.device import (
     BogusHALDevice,
@@ -10,7 +10,7 @@ from .bogus_devices.device import (
 from .mock_hal import MockHALComponent
 
 
-class BaseHALTestClass(BaseCiA301TestClass):
+class BaseHALTestClass(BaseCiA402TestClass):
 
     # Classes under test in this module
     data_type_class = HALDataType
