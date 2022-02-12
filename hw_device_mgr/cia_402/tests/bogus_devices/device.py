@@ -9,10 +9,10 @@ class BogusCiA402Device(BogusCiA301Device):
 
 
 class BogusCiA402V1Servo(BogusCiA402Device, BogusCiA301V1Servo):
-    name = "bogo_v2_cia402_servo"
+    name = "bogo_cia402_v1_servo"
     product_code = 0xB0905020
 
 
 class BogusCiA402V2Servo(BogusCiA402Device, BogusCiA301V2Servo):
-    name = "bogo_v2_cia402_servo"
+    name = "bogo_cia402_v2_servo"
     product_code = 0xB0905021
