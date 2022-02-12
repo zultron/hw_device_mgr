@@ -5,9 +5,9 @@ from ..sdo import CiA301SDO
 from ..config import CiA301SimConfig
 from .bogus_devices.device import (
     BogusCiA301Device,
-    BogusV1CiA301Servo,
-    BogusV2CiA301Servo,
-    BogusV1CiA301IO,
+    BogusCiA301V1Servo,
+    BogusCiA301V2Servo,
+    BogusCiA301V1IO,
 )
 from ..command import CiA301SimCommand
 
@@ -32,9 +32,9 @@ class BaseCiA301TestClass(BaseTestClass):
     config_class = CiA301SimConfig
     device_class = BogusCiA301Device
     device_model_classes = (
-        BogusV1CiA301Servo,
-        BogusV2CiA301Servo,
-        BogusV1CiA301IO,
+        BogusCiA301V1Servo,
+        BogusCiA301V2Servo,
+        BogusCiA301V1IO,
     )
     device_model_sdo_clone = None
 

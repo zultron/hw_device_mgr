@@ -12,16 +12,16 @@ class BogusCiA301Device(CiA301SimDevice, BogusDevice):
     vendor_id = 0xB090C0
 
 
-class BogusV1CiA301Servo(BogusCiA301Device, BogusV1Servo):
+class BogusCiA301V1Servo(BogusCiA301Device, BogusV1Servo):
     name = "bogo_cia301_v1_servo"
     product_code = 0xB0905010
 
 
-class BogusV2CiA301Servo(BogusCiA301Device, BogusV2Servo):
+class BogusCiA301V2Servo(BogusCiA301Device, BogusV2Servo):
     name = "bogo_cia301_v2_servo"
     product_code = 0xB0905011
 
 
-class BogusV1CiA301IO(BogusCiA301Device, BogusV1IO):
+class BogusCiA301V1IO(BogusCiA301Device, BogusV1IO):
     name = "bogo_cia301_v1_io"
     product_code = 0xB0901010
