@@ -1,4 +1,4 @@
-from ...cia_301.tests.base_test_class import BaseCiA301TestClass, BaseTestClass
+from ...cia_402.tests.base_test_class import BaseCiA402TestClass
 from ..data_types import EtherCATDataType
 from ..sdo import EtherCATSDO
 from ..command import EtherCATSimCommand
@@ -11,7 +11,7 @@ from .bogus_devices.device import (
 )
 
 
-class BaseEtherCATTestClass(BaseCiA301TestClass):
+class BaseEtherCATTestClass(BaseCiA402TestClass):
 
     # Classes under test in this module
     data_type_class = EtherCATDataType

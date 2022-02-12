@@ -8,10 +8,9 @@ from .bogus_devices.device import (
 
 class BaseCiA402TestClass(BaseCiA301TestClass):
 
-    # test_read_update_write() configuration
-    read_update_write_yaml = "cia_402/tests/read_update_write.cases.yaml"
+    # test_read_update_write_402() configuration
+    read_update_write_402_yaml = "cia_402/tests/read_update_write.cases.yaml"
 
     # Classes under test in this module
     device_class = BogusCiA402Device
     device_model_classes = (BogusCiA402V1Servo, BogusCiA402V2Servo)
-    test_io_devices = False  # CiA402 doesn't cover IO devices

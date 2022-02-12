@@ -1,6 +1,9 @@
 from ...device import EtherCATSimDevice
 from ....cia_301.tests.bogus_devices.device import (
-    BogusCiA301Device, BogusCiA301V1Servo, BogusCiA301V2Servo, BogusCiA301V1IO
+    BogusCiA301Device, BogusCiA301V1IO
+)
+from ....cia_402.tests.bogus_devices.device import (
+    BogusCiA402Device, BogusCiA402V1Servo, BogusCiA402V2Servo
 )
 
 
@@ -8,13 +11,13 @@ class BogusEtherCATDevice(EtherCATSimDevice, BogusCiA301Device):
     category = "bogus_ethercat_devices"
 
 
-class BogusEtherCATServo(BogusEtherCATDevice, BogusCiA301V1Servo):
+class BogusEtherCATServo(BogusEtherCATDevice, BogusCiA402V1Servo):
     name = "bogo_ethercat_servo"
     product_code = 0xB0905030
     xml_description_fname = "BogusServo.xml"
 
 
-class BogusOtherCATServo(BogusEtherCATDevice, BogusCiA301V2Servo):
+class BogusOtherCATServo(BogusEtherCATDevice, BogusCiA402V2Servo):
     name = "bogo_Othercat_servo"
     product_code = 0xB0905031
     xml_description_fname = "BogusServo.xml"

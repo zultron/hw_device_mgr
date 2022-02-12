@@ -1,14 +1,16 @@
-from ...cia_301.tests.test_device import TestCiA301Device as _TestCiA301Device
+from ...cia_402.tests.test_device import TestCiA402Device as _TestCiA402Device
 from .base_test_class import BaseEtherCATTestClass
 
 
-class TestEtherCATDevice(BaseEtherCATTestClass, _TestCiA301Device):
+class TestEtherCATDevice(BaseEtherCATTestClass, _TestCiA402Device):
 
     expected_mro = [
         "BogusEtherCATDevice",
         "EtherCATSimDevice",
         "EtherCATDevice",
-        *_TestCiA301Device.expected_mro,
+        # Knock off 'BogusCiA402Device', 'CiA402SimDevice', 'CiA402Device'
+        # for combined CiA 301 + 402 tests
+        *_TestCiA402Device.expected_mro[3:],
     ]
 
     def test_xml_description_path(self):

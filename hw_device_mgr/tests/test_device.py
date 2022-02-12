@@ -290,11 +290,14 @@ class TestDevice(BaseTestClass):
                 print(f"  ****MISMATCH****  expected:  {expected_val}")
                 passing = False
         # Check expected data is comprehensive, all params checked
-        if actual:
-            print(f"  ****ERROR****  Params not checked:  {actual}")
-            raise KeyError(f"Params not checked:  {actual}")
+        self.check_untested_params(actual)
 
         return passing
+
+    def check_untested_params(self, params):
+        if params:
+            print(f"  ****ERROR****  Params not checked:  {params}")
+            raise KeyError(f"Params not checked:  {params}")
 
     #
     # Main function
