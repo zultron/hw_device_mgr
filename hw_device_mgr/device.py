@@ -213,8 +213,8 @@ class Device(abc.ABC):
         return cls._category_registry.get(category or cls.category, None)
 
     @classmethod
-    def get_model(cls, model_id=None, category=None):
-        assert category is None, f"category={category}"
+    def get_model(cls, model_id=None):
+        category = cls.category
         assert category in cls._model_registry, f"{category} not in {cls._model_registry}"
         model_registry = cls._model_registry[category]
         if model_id is None:  # Return set of all model classes

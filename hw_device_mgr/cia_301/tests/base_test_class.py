@@ -39,9 +39,11 @@ class BaseCiA301TestClass(BaseTestClass):
     device_model_sdo_clone = None
 
     def init_sim(self):
-        # SDO data & sim device data
+        # Sim device & SDO data
         path, sdo_data = self.load_yaml(self.device_sdos_yaml, True)
         sdo_data = self.munge_sdo_data(sdo_data)
+        super().init_sim(sdo_data=sdo_data)
+
         # Device config
         self.config_class._device_config.clear()
         path, dev_conf = self.load_yaml(self.device_config_yaml, True)
