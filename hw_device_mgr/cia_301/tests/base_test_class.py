@@ -37,14 +37,20 @@ class BaseCiA301TestClass(BaseTestClass):
         BogusCiA301V1IO,
     )
     device_model_sdo_clone = None
-    test_io_devices = True  # CiA402 doesn't cover IO devices
+    load_device_sdos_yaml = True  # EtherCAT classes get SDO data from ESI file
 
     def init_sim(self):
-        # Sim device & SDO data
-        path, sdo_data = self.load_yaml(self.device_sdos_yaml, True)
-        sdo_data = self.munge_sdo_data(sdo_data)
-        super().init_sim(sdo_data=sdo_data)
+        if self.load_device_sdos_yaml:
+            # Sim device & SDO data
+            path, sdo_data = self.load_yaml(self.device_sdos_yaml, True)
+            sdo_data = self.munge_sdo_data(sdo_data)
+            super().init_sim(sdo_data=sdo_data)
+        else:
+            super().init_sim()
+        # Device config
+        self.init_device_config()
 
+    def init_device_config(self):
         # Device config
         self.config_class._device_config.clear()
         path, dev_conf = self.load_yaml(self.device_config_yaml, True)
@@ -55,9 +61,10 @@ class BaseCiA301TestClass(BaseTestClass):
     def munge_device_config(cls, *, device_config):
         new_device_config = list()
         for conf in device_config:
+            if cls.irrelevant_test_category(conf["test_category"]):
+                continue  # Skip irrelevant data
             device_cls = cls.test_category_class(conf["test_category"])
-            if device_cls is None:
-                continue
+            assert device_cls
             new_device_config.append(conf)
             conf["vendor_id"], conf["product_code"] = device_cls.device_model_id()
         assert new_device_config  # Sanity check not empty
@@ -185,10 +192,10 @@ class BaseCiA301TestClass(BaseTestClass):
     def munge_sdo_data(cls, sdo_data, conv_sdos=False):
         new_sdo_data = dict()
         for test_category, old_sdos in sdo_data.items():
+            if cls.irrelevant_test_category(test_category):
+                continue  # Skip irrelevant data
             device_cls = cls.test_category_class(test_category)
-            if device_cls is None and test_category == "bogus_v1_io":
-                continue  # CiA402 doesn't cover IO devices
-            assert device_cls is not None
+            assert device_cls
             sdos = new_sdo_data[device_cls.name] = dict()
             for ix, sdo in old_sdos.items():
                 if conv_sdos:

@@ -92,8 +92,7 @@ class CiA301Device(Device):
 
     @classmethod
     def munge_sdo_data(cls, sdo_data):
-        # Turn per-category SDO data from sim_sdo_data.yaml into
-        # per-model_id SDO data
+        # Turn per-model name SDO data from YAML into per-model_id SDO data
         res = dict()
         for model_name, sd in sdo_data.items():
             device_cls = cls.get_model_by_name(model_name)

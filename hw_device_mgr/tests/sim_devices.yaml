@@ -1,6 +1,6 @@
-# So this config file is reusable, test fixtures may add
-# model_id-related keys based on the test_category key and the classes
-# under test.
+# So this config file is reusable, test fixtures will translate the
+# `test_category` key into model_id-related keys (often `vendor_id`
+# and `product_code`) appropriate to the classes under test.
 - test_category:  bogus_v1_servo
   bus:  0
   position:  10

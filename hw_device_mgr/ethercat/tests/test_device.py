@@ -8,7 +8,7 @@ class TestEtherCATDevice(BaseEtherCATTestClass, _TestCiA301Device):
         "BogusEtherCATDevice",
         "EtherCATSimDevice",
         "EtherCATDevice",
-        *_TestCiA301Device.expected_mro[1:],  # Lop off BogusCiA301Device
+        *_TestCiA301Device.expected_mro,
     ]
 
     def test_xml_description_path(self):

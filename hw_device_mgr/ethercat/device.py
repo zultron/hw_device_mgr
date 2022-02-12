@@ -58,8 +58,7 @@ class EtherCATDevice(CiA301Device, abc.ABC):
         return cls.pkg_path(cls.device_xml_dir) / cls.xml_description_fname
 
     @classmethod
-    def add_device_sdos_from_esi(cls):
-        """Read device SDOs from ESI file and add to configuration."""
+    def read_device_sdos_from_esi(cls):
         sdo_data = dict()
         dev_esi_paths = set()
         for dev in cls.get_model():
@@ -69,6 +68,12 @@ class EtherCATDevice(CiA301Device, abc.ABC):
             dev_esi_paths.add(esi_path)
             dev_sdo_data = dev.config_class.get_device_sdos_from_esi(esi_path)
             sdo_data.update(dev_sdo_data)
+        return sdo_data
+
+    @classmethod
+    def add_device_sdos_from_esi(cls):
+        """Read device SDOs from ESI file and add to configuration."""
+        sdo_data = cls.read_device_sdos_from_esi()
         cls.add_device_sdos(sdo_data)
 
 
@@ -84,15 +89,11 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
 
     @classmethod
     def munge_sdo_data(cls, sdo_data):
-        res = dict()
-        for model_id, sdos in sdo_data.items():
-            model_sdos = res[model_id] = dict()
-            for ix, sdo in sdos.items():
-                model_sdos[ix] = sdo
-        return res
+        # SDO data from ESI parser already in correct format
+        return sdo_data
 
     @classmethod
-    def init_sim(cls, sim_device_data=dict()):
+    def init_sim(cls, **kwargs):
         """
         Configure device, config, command for sim EtherCAT devices.
 
@@ -100,26 +101,5 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
         from EtherCAT ESI description file and pass with sim device data
         to parent class's method.
         """
-        cls.add_device_sdos_from_esi()
-        sim_device_data = cls.munge_sim_device_data(sim_device_data)
-        cls.config_class.init_sim(sim_device_data=sim_device_data)
-
-    @classmethod
-    def add_device_sdos(cls, sdo_data):
-        """
-        Add SDO data to all known devices.
-
-        So that test ESI files are reusable and don't need to be
-        duplicated just to change the device product code, go through
-        devices and any missing SDO data, add that from a similar
-        device.
-        """
-        for model_cls in cls.get_model():
-            for device_cls in model_cls.__mro__:
-                if "product_code" not in device_cls.__dict__:
-                    continue
-                model_id = device_cls.device_model_id()
-                if model_id in sdo_data:
-                    sdo_data[model_cls.device_model_id()] = sdo_data[model_id]
-                    break
-        super().add_device_sdos(sdo_data)
+        sdo_data = cls.read_device_sdos_from_esi()
+        super().init_sim(sdo_data=sdo_data, **kwargs)

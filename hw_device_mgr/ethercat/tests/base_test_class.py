@@ -1,4 +1,4 @@
-from ...cia_301.tests.base_test_class import BaseCiA301TestClass
+from ...cia_301.tests.base_test_class import BaseCiA301TestClass, BaseTestClass
 from ..data_types import EtherCATDataType
 from ..sdo import EtherCATSDO
 from ..command import EtherCATSimCommand
@@ -24,31 +24,25 @@ class BaseEtherCATTestClass(BaseCiA301TestClass):
         BogusOtherCATServo,
         BogusEtherCATIO,
     )
-    device_model_sdo_clone = (
+    sdo_model_id_clone = (
         (0x00B090C0, 0xB0905030),
         (0x00B090C0, 0xB0905031),
         (0x00B090C0, 0xB0901030),
     )
+    load_device_sdos_yaml = False  # SDO data from ESI file
 
     def init_sim(self):
-        device_class = getattr(self, "device_base_class", self.device_class)
-        assert not getattr(self, "_sim_initialized", False)  # Run once only
-        device_class.clear_devices()
-        self.config_class._device_config.clear()
-        self.command_class.sim_device_data.clear()
-        path, dev_conf = self.load_yaml(self.device_config_yaml, True)
-        print(f"  loaded device_config from {path}")
-        device_class.set_device_config(dev_conf)
-        path, dev_data = self.load_yaml(self.sim_device_data_yaml, True)
-        dev_data = self.munge_sim_device_data(dev_data)
-        print(f"  loaded sim_device_data from {path}")
-        device_class.add_device_sdos_from_esi()
-        if self.device_model_sdo_clone:
-            # Reuse ESI SDO data
-            sdos = self.config_class._model_sdos
-            for clone_id, cls in zip(
-                self.device_model_sdo_clone, self.device_model_classes
-            ):
-                sdos[cls.device_model_id()] = sdos[clone_id]
-        device_class.init_sim(sim_device_data=dev_data)
-        self._sim_initialized = True
+        # Init sim device data, SDOs and device config
+        super().init_sim()
+        # ESI may not match test devices, but we want to reuse it
+        # - Build map of ESI model ID equivalents
+        sdos = self.config_class._model_sdos
+        model_ids = [dc.device_model_id() for dc in self.device_model_classes]
+        sdo_map = dict(zip(model_ids, self.sdo_model_id_clone))
+        # - Copy SDO equivalents for any missing device
+        for device_class in self.device_model_classes:
+            model_id = device_class.device_model_id()
+            if model_id in sdos:
+                continue  # Good, already there
+            else:
+                sdos[model_id] = sdos[sdo_map[model_id]]

@@ -29,6 +29,13 @@ class BaseTestClass:
     # Sim mode by default
     sim = True
 
+    # Whether to test IO devices (CiA402 only applies to servos)
+    test_io_devices = True
+
+    @classmethod
+    def irrelevant_test_category(cls, test_category):
+        return test_category == "bogus_v1_io" and not cls.test_io_devices
+
     @classmethod
     def load_yaml(cls, fname, return_path=False):
         p = Path(__file__).parent.parent.joinpath(fname)
@@ -47,18 +54,17 @@ class BaseTestClass:
     @classmethod
     def munge_sim_device_data(cls, sim_device_data):
         """Massage device test data for reusability."""
-
-        # tmpfile = tmp_path / "sim_device.yaml"
-        # with open(tmpfile, "w") as f:
-        #     f.write(yaml.safe_dump(sim_device_data))
-
+        # We want to reuse the single `sim_devices.yaml` for all classes, but
+        # key names and values that go into generating model_id will change.
+        # This method adds those keys & values based on the YAML `test_category`
+        # key (only used in tests).
         new_sim_device_data = list()
         for dev in sim_device_data:
+            if cls.irrelevant_test_category(dev["test_category"]):
+                continue  # Skip irrelevant data
             # Get device class from test_category key
             device_cls = cls.test_category_class(dev["test_category"])
-            # Prune N/A entries
-            if device_cls is None:
-                continue
+            assert device_cls
             new_sim_device_data.append(dev)
             # Set model_id key
             dev["model_id"] = device_cls.model_id
@@ -70,15 +76,22 @@ class BaseTestClass:
         return new_sim_device_data
 
     def init_sim(self, **kwargs):
+        # Only init_sim once
         assert not getattr(self, "_sim_initialized", False)
+        self._sim_initialized = True
+
+        dev_data = self.init_sim_device_data()
         self.device_class.clear_devices()
+        self.device_class.init_sim(sim_device_data=dev_data, **kwargs)
+
+    def init_sim_device_data(self):
+        # Set up sim devices:  munge YAML data & pass to sim device class
         self.sim_device_data_path, dev_data = self.load_yaml(
             self.sim_device_data_yaml, True
         )
         print(f"  loaded sim_device_data from {self.sim_device_data_path}")
-        dev_data = self.munge_sim_device_data(dev_data)
-        self.device_class.init_sim(sim_device_data=dev_data, **kwargs)
-        self._sim_initialized = True
+        return self.munge_sim_device_data(dev_data)
+
 
     @pytest.fixture
     def device_cls(self):
