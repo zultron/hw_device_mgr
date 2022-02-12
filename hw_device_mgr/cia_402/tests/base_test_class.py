@@ -14,3 +14,4 @@ class BaseCiA402TestClass(BaseCiA301TestClass):
     # Classes under test in this module
     device_class = BogusCiA402Device
     device_model_classes = (BogusCiA402V1Servo, BogusCiA402V2Servo)
+    test_io_devices = False  # CiA402 doesn't cover IO devices

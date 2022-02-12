@@ -37,6 +37,7 @@ class BaseCiA301TestClass(BaseTestClass):
         BogusCiA301V1IO,
     )
     device_model_sdo_clone = None
+    test_io_devices = True  # CiA402 doesn't cover IO devices
 
     def init_sim(self):
         # Sim device & SDO data
@@ -185,6 +186,8 @@ class BaseCiA301TestClass(BaseTestClass):
         new_sdo_data = dict()
         for test_category, old_sdos in sdo_data.items():
             device_cls = cls.test_category_class(test_category)
+            if device_cls is None and test_category == "bogus_v1_io":
+                continue  # CiA402 doesn't cover IO devices
             assert device_cls is not None
             sdos = new_sdo_data[device_cls.name] = dict()
             for ix, sdo in old_sdos.items():

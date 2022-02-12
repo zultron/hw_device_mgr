@@ -4,7 +4,7 @@ from ....cia_301.tests.bogus_devices.device import (
 )
 
 
-class BogusCiA402Device(BogusCiA301Device):
+class BogusCiA402Device(CiA402SimDevice, BogusCiA301Device):
     category = "bogus_cia402_devices"
 
 
