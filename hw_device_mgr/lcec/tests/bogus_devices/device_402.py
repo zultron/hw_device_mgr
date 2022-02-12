@@ -12,7 +12,7 @@ class BogusLCEC402Device(LCECSimDevice, BogusCiA402DeviceCategory):
     vendor_id = 0xB090C0
 
 
-class BogusV1LCEC402Servo(BogusLCEC402Device, BogusCiA402V1ServoCategory):
+class BogusLCEC402V1Servo(BogusLCEC402Device, BogusCiA402V1ServoCategory):
     name = "bogo_v1_lcec_402_servo"
     product_code = 0xB0905062
 
