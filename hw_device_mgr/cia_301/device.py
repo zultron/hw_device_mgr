@@ -43,8 +43,6 @@ class CiA301Device(Device):
         product code.
         """
         model_id = cls.vendor_id, cls.product_code
-        if None in model_id:
-            return None
         return cls.config_class.format_model_id(model_id)
 
     @property
@@ -97,12 +95,12 @@ class CiA301Device(Device):
         # Turn per-category SDO data from sim_sdo_data.yaml into
         # per-model_id SDO data
         res = dict()
-        for category, sd in sdo_data.items():
-            device_cls = cls.device_category_class(category)
-            if device_cls is None:
-                continue
+        for model_name, sd in sdo_data.items():
+            device_cls = cls.get_model_by_name(model_name)
             model_id = device_cls.device_model_id()
             res[model_id] = sd
+        assert res
+        assert None not in res
         return res
 
     @classmethod
@@ -116,7 +114,7 @@ class CiA301Device(Device):
         cls.config_class.add_device_sdos(cls.munge_sdo_data(sdo_data))
 
     @classmethod
-    def get_device(cls, address=None, sim=False, **kwargs):
+    def get_device(cls, address=None, **kwargs):
         registry = cls._address_registry.setdefault(cls.name, dict())
         config = address
         address = (
@@ -124,7 +122,7 @@ class CiA301Device(Device):
         )
         if address in registry:
             return registry[address]
-        device_obj = cls(address=config, sim=sim, **kwargs)
+        device_obj = cls(address=config, **kwargs)
         registry[address] = device_obj
         return device_obj
 
@@ -134,7 +132,7 @@ class CiA301Device(Device):
         devices = list()
         config_cls = cls.config_class
         for config in config_cls.scan_bus(bus=bus):
-            device_cls = cls.get_model(config.model_id, category="all")
+            device_cls = cls.get_model(config.model_id)
             if device_cls is None:
                 raise NotImplementedError(
                     f"Unknown model {config.model_id} at {config.address}"
@@ -162,11 +160,11 @@ class CiA301SimDevice(CiA301Device, SimDevice):
             if "category" not in c:
                 model_id = (uint16(c["vendor_id"]), uint16(c["product_code"]))
                 c["vendor_id"], c["product_code"] = model_id
-                device_cls = cls.get_model(key=model_id, category="all")
+                device_cls = cls.get_model(model_id=model_id)
                 c["category"] = device_cls.category
                 config_cooked.append(c)
                 continue
-            device_cls = cls.device_category_class(c["category"])
+            device_cls = cls.category_cls(c["category"])
             if device_cls is None:
                 # Category may be irrelevant, e.g. IO device in servo tests
                 continue
@@ -178,26 +176,19 @@ class CiA301SimDevice(CiA301Device, SimDevice):
         super().set_device_config(config_cooked)
 
     @classmethod
-    def munge_sim_device_data(cls, sim_device_data):
-        res = dict()
-        for dd in sim_device_data:
-            model_id = dd.get("model_id", (dd["vendor_id"], dd["product_code"]))
-            model_id = cls.config_class.format_model_id(model_id)
-            device_cls = cls.get_model(model_id)
-            assert device_cls, f"Unable to grok device class from {model_id}"
-            updates = dict(
-                model_id=model_id,
-                vendor_id=model_id[0],
-                product_code=model_id[1],
-                address=(dd["bus"], dd["position"]),
-            )
-            dd.update(updates)
-            res[dd["address"]] = dd
-        assert res
-        return res
+    def sim_device_data_class(cls, sim_device_data):
+        model_id = (sim_device_data["vendor_id"], sim_device_data["product_code"])
+        return cls.get_model(model_id)
 
     @classmethod
-    def init_sim(cls, sim_device_data=dict(), sdo_data=dict()):
+    def sim_device_data_address(cls, sim_device_data):
+        model_id = sim_device_data["bus"], sim_device_data["position"]
+        sim_device_data["model_id"] = model_id
+        return model_id
+
+    @classmethod
+    def init_sim(cls, *, sim_device_data, sdo_data):
+        super().init_sim(sim_device_data=sim_device_data)
+        sim_device_data=cls._sim_device_data[cls.category]
         cls.add_device_sdos(sdo_data)
-        sim_device_data = cls.munge_sim_device_data(sim_device_data)
         cls.config_class.init_sim(sim_device_data=sim_device_data)

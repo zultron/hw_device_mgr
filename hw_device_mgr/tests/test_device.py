@@ -7,7 +7,6 @@ import ruamel.yaml
 class TestDevice(BaseTestClass):
     # Expected class MRO
     expected_mro = [
-        "BogusLowEndDevice",
         "BogusDevice",
         "SimDevice",
         "Device",
@@ -69,8 +68,6 @@ class TestDevice(BaseTestClass):
                 print(f"registry:\n{pformat(registry)}")
                 if not model_cls.allow_rereg:
                     assert category_cls.get_model(model_id) is model_cls
-                    category = category_cls.category
-                    assert model_cls.get_model(model_id, category) is model_cls
                 if "category" not in category_cls.__dict__:
                     continue
                 assert model_id in registry
@@ -81,8 +78,8 @@ class TestDevice(BaseTestClass):
         devs = device_cls.scan_devices(sim=self.sim)
         for obj, data in zip(devs, all_device_data.values()):
             print(f"Dev:  {obj}")
-            assert obj.name == data["name"]
-            assert obj.address == data["address"]
+            assert obj.name == data["test_name"]
+            assert obj.address == data["test_address"]
             assert obj.model_id == data["model_id"]
 
     #
@@ -92,7 +89,7 @@ class TestDevice(BaseTestClass):
     @pytest.fixture
     def obj(self, device_cls, sim_device_data):
         self.sim_device_data = sim_device_data
-        self.obj = device_cls(address=sim_device_data["address"], sim=self.sim)
+        self.obj = device_cls(address=sim_device_data["test_address"], sim=self.sim)
         self.obj.init()
         yield self.obj
 

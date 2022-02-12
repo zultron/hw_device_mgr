@@ -85,6 +85,8 @@ class CiA301Config:
                 else:
                     sdos_new[ix] = cls.sdo_class(**sd)
             cls._model_sdos[model_id] = sdos_new
+        assert cls._model_sdos
+        assert None not in cls._model_sdos
 
     @classmethod
     def sdo_ix(cls, ix):
@@ -253,7 +255,7 @@ class CiA301SimConfig(CiA301Config):
     command_class = CiA301SimCommand
 
     @classmethod
-    def init_sim(cls, sim_device_data=None):
+    def init_sim(cls, *, sim_device_data):
         assert sim_device_data
         sdo_data = dict()
         for address, data in sim_device_data.items():

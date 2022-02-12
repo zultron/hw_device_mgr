@@ -7,7 +7,7 @@
   #   `device_config` fixture:
   # vendor_id:  0xB090C0
   # product_code:  0xB0905010
-  category:  bogus_v1_servo
+  test_category:  bogus_v1_servo
 
   bus: 0
   positions: [10, 11, 12, 13, 14, 15]
@@ -91,7 +91,7 @@
   #   `device_config` fixture:
   # vendor_id:  0xB090C0
   # product_code:  0xB0905011
-  category:  bogus_v2_servo
+  test_category:  bogus_v2_servo
 
   bus: 0
   positions: [10, 11, 12, 13, 14, 15]
@@ -177,7 +177,7 @@
   #   `device_config` fixture:
   # vendor_id:  0xB090C0
   # product_code:  0xB0901010
-  category:  bogus_v1_io
+  test_category:  bogus_v1_io
 
   bus: 0
   positions: [16, 17]

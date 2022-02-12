@@ -6,10 +6,9 @@ import pytest
 class TestCiA301Device(BaseCiA301TestClass, _TestDevice):
     expected_mro = [
         "BogusCiA301Device",
-        "BogusCiA301DeviceCategory",
         "CiA301SimDevice",
         "CiA301Device",
-        *_TestDevice.expected_mro[1:],  # Lop off BogusLowEndDevice
+        *_TestDevice.expected_mro,
     ]
 
     # Test CiA NMT init:  online & operational status
@@ -18,7 +17,7 @@ class TestCiA301Device(BaseCiA301TestClass, _TestDevice):
     @pytest.fixture
     def obj(self, device_cls, sim_device_data):
         self.obj = self.device_model_cls(
-            address=sim_device_data["address"], sim=self.sim
+            address=sim_device_data["test_address"], sim=self.sim
         )
         self.obj.init()
         yield self.obj

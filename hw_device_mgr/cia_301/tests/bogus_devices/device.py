@@ -1,45 +1,27 @@
 from ...device import CiA301SimDevice
 from ....tests.bogus_devices.device import (
     BogusDevice,
-    BogusV1ServoDevice,
-    BogusV2ServoDevice,
-    BogusV1IODevice,
+    BogusV1Servo,
+    BogusV2Servo,
+    BogusV1IO,
 )
 
 
-# Define a few abstract device categories for sim models to inherit
-# from
-class BogusCiA301DeviceCategory(CiA301SimDevice, BogusDevice):
+class BogusCiA301Device(CiA301SimDevice, BogusDevice):
+    category = "bogus_cia301_devices"
     vendor_id = 0xB090C0
 
 
-class BogusV1CiA301ServoCategory(BogusCiA301DeviceCategory, BogusV1ServoDevice):
-    pass
-
-
-class BogusV2CiA301ServoCategory(BogusCiA301DeviceCategory, BogusV2ServoDevice):
-    pass
-
-
-class BogusV1CiA301IOCategory(BogusCiA301DeviceCategory, BogusV1IODevice):
-    pass
-
-
-# Define a few concrete (sim) device models in a category
-class BogusCiA301Device(BogusCiA301DeviceCategory):
-    category = "bogus_cia301_devices"
-
-
-class BogusV1CiA301Servo(BogusCiA301Device, BogusV1CiA301ServoCategory):
-    name = "bogo_v1_cia301_servo"
+class BogusV1CiA301Servo(BogusCiA301Device, BogusV1Servo):
+    name = "bogo_cia301_v1_servo"
     product_code = 0xB0905010
 
 
-class BogusV2CiA301Servo(BogusCiA301Device, BogusV2CiA301ServoCategory):
-    name = "bogo_v2_cia301_servo"
+class BogusV2CiA301Servo(BogusCiA301Device, BogusV2Servo):
+    name = "bogo_cia301_v2_servo"
     product_code = 0xB0905011
 
 
-class BogusV1CiA301IO(BogusCiA301Device, BogusV1CiA301IOCategory):
-    name = "bogo_v1_cia301_io"
+class BogusV1CiA301IO(BogusCiA301Device, BogusV1IO):
+    name = "bogo_cia301_v1_io"
     product_code = 0xB0901010

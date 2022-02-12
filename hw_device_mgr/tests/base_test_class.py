@@ -4,7 +4,7 @@ import os
 import yaml
 from .bogus_devices.data_types import BogusDataType
 from .bogus_devices.device import (
-    BogusLowEndDevice,
+    BogusDevice,
     BogusV1Servo,
     BogusV2Servo,
     BogusV1IO,
@@ -20,7 +20,7 @@ class BaseTestClass:
     # Data types
     # Classes under test in this module
     data_type_class = BogusDataType
-    device_class = BogusLowEndDevice
+    device_class = BogusDevice
     device_model_classes = BogusV1IO, BogusV2Servo, BogusV1Servo
 
     # Device class has `category` attribute
@@ -37,43 +37,48 @@ class BaseTestClass:
         return (p, data) if return_path else data
 
     @classmethod
+    def test_category_class(cls, test_category):
+        for dmc in cls.device_model_classes:
+            assert dmc.name
+            if dmc.test_category == test_category and dmc.name:
+                return dmc
+        return None  # E.g. IO module data in 402 test class
+
+    @classmethod
     def munge_sim_device_data(cls, sim_device_data):
-        """Massage device test data for usability."""
+        """Massage device test data for reusability."""
 
         # tmpfile = tmp_path / "sim_device.yaml"
         # with open(tmpfile, "w") as f:
         #     f.write(yaml.safe_dump(sim_device_data))
 
-        # Locate device model class
+        new_sim_device_data = list()
         for dev in sim_device_data:
-            device_cls = cls.device_class.device_category_class(dev["category"])
+            # Get device class from test_category key
+            device_cls = cls.test_category_class(dev["test_category"])
+            # Prune N/A entries
             if device_cls is None:
                 continue
+            new_sim_device_data.append(dev)
+            # Set model_id key
+            dev["model_id"] = device_cls.model_id
+            # Set name & address (for test logging purposes only)
+            dev["test_name"] = device_cls.name
+            dev["test_address"] = dev["position"]
 
-            # Set sparse keys
-            updates = dict(
-                model_id=device_cls.device_model_id(),
-                name=device_cls.name,
-                address=dev["position"],
-            )
-            dev.update(updates)
+        assert new_sim_device_data  # Sanity:  have test cases
+        return new_sim_device_data
 
-        return sim_device_data
-
-    def init_sim(self):
-        if getattr(self, "_sim_initialized", False):
-            return
+    def init_sim(self, **kwargs):
+        assert not getattr(self, "_sim_initialized", False)
         self.device_class.clear_devices()
-        self.dev_data_path, dev_data = self.load_yaml(
+        self.sim_device_data_path, dev_data = self.load_yaml(
             self.sim_device_data_yaml, True
         )
+        print(f"  loaded sim_device_data from {self.sim_device_data_path}")
         dev_data = self.munge_sim_device_data(dev_data)
-        self.device_class.init_sim(sim_device_data=dev_data)
+        self.device_class.init_sim(sim_device_data=dev_data, **kwargs)
         self._sim_initialized = True
-
-    @classmethod
-    def load_sim_device_data_yaml(cls):
-        return cls.load_yaml(cls.sim_device_data_yaml)
 
     @pytest.fixture
     def device_cls(self):
@@ -85,7 +90,7 @@ class BaseTestClass:
     @pytest.fixture
     def all_device_data(self, device_cls):
         # All device data in a dict
-        yield device_cls._sim_device_data
+        yield device_cls._sim_device_data[self.device_class.category]
 
     def pytest_generate_tests(self, metafunc):
         # Dynamic test parametrization
@@ -97,7 +102,7 @@ class BaseTestClass:
         sim_device_data = self.munge_sim_device_data(sim_device_data)
         vals, ids = (list(), list())
         for dev in sim_device_data:
-            ids.append(f"{dev['name']}@{dev['address']}")
+            ids.append(f"{dev['test_name']}@{dev['test_address']}")
             vals.append(dev)
         metafunc.parametrize("sim_device_data", vals, ids=ids, scope="class")
 

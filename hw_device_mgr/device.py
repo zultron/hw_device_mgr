@@ -175,6 +175,9 @@ class Device(abc.ABC):
     # { category : { model_id : device_class } }
     _model_registry = dict()
 
+    # { category : { model_name : device_class } }
+    _model_name_registry = dict()
+
     @classmethod
     def _register_model(cls):
         # Register model in all parent categories
@@ -187,13 +190,14 @@ class Device(abc.ABC):
             category = supercls.category
             # Ensure category is registered
             cls._category_registry.setdefault(category, supercls)
-            # Check & register device type
+            # Check & register device id
             model_registry = cls._model_registry.setdefault(category, dict())
-            if not cls.allow_rereg and model_id in model_registry:
-                raise KeyError(
-                    f"Cannot reregister {cls} {model_id} as {supercls.category}"
-                )
+            assert model_id not in model_registry
             model_registry[model_id] = cls
+            # Register device name
+            model_registry = cls._model_name_registry.setdefault(category, dict())
+            assert cls.name not in model_registry, f"{cls.name} in {category} registry"
+            model_registry[cls.name] = cls
             cls._registry_log.append(
                 ("cat", cls.name, model_id, category, cls, supercls)
             )
@@ -209,15 +213,23 @@ class Device(abc.ABC):
         return cls._category_registry.get(category or cls.category, None)
 
     @classmethod
-    def get_model(cls, key=None, category=None):
-        if category not in cls._model_registry:
-            return None
+    def get_model(cls, model_id=None, category=None):
+        assert category is None, f"category={category}"
+        assert category in cls._model_registry, f"{category} not in {cls._model_registry}"
         model_registry = cls._model_registry[category]
-        if key is None:  # Return set of all model classes
+        if model_id is None:  # Return set of all model classes
             return set(model_registry.values())
-        if key not in model_registry:
+        if model_id not in model_registry:
             return None
-        return model_registry[key]
+        return model_registry[model_id]
+
+    @classmethod
+    def get_model_by_name(cls, name):
+        category = cls.category
+        assert category in cls._model_name_registry
+        model_registry = cls._model_name_registry[category]
+        assert name in model_registry, f"{name} not in {model_registry}"
+        return model_registry[name]
 
     ########################################
     # Device identifier registry and instance factory
@@ -253,32 +265,43 @@ class Device(abc.ABC):
 
 
 class SimDevice(Device):
-    @classmethod
-    def device_category_class(cls, category):
-        category_classes = (
-            # Intersection of devices in both sim_devices.yaml
-            # "category" and the present class
-            cls.get_model(category=category)
-            & cls.get_model()
-        )
-        assert len(category_classes) <= 1
-        return category_classes.pop() if category_classes else None
 
     _sim_device_data = dict()
 
     @classmethod
-    def init_sim(cls, sim_device_data=dict()):
-        cls._sim_device_data.clear()
-        for d in sim_device_data:
-            # Sanity check:  no overwrites
-            assert d["address"] not in cls._sim_device_data
-            cls._sim_device_data[d["address"]] = d
+    def sim_device_data_class(cls, sim_device_data):
+        return cls.get_model(sim_device_data["model_id"])
+
+    @classmethod
+    def sim_device_data_address(cls, sim_device_data):
+        return sim_device_data["position"]
+
+    @classmethod
+    def init_sim(cls, *, sim_device_data):
+        """Massage device test data for usability."""
+        # assert cls.category not in cls._sim_device_data, f"{cls.category} in {cls._sim_device_data.keys()}"
+        cls_sim_data = cls._sim_device_data[cls.category] = dict()
+
+        for dev in sim_device_data:
+            device_cls = cls.sim_device_data_class(dev)
+            assert device_cls is not None
+
+            # Set sparse keys
+            updates = dict(
+                model_id=device_cls.device_model_id(),
+                name=device_cls.name,
+                address=cls.sim_device_data_address(dev),
+            )
+            cls_sim_data[dev["model_id"]] = {**dev, **updates}
+
+        assert cls_sim_data
 
     @classmethod
     def scan_devices(cls, **kwargs):
         res = list()
-        for data in cls._sim_device_data.values():
-            dev_type = cls.device_category_class(data["category"])
+        cls_sim_data = cls._sim_device_data[cls.category]
+        for data in cls_sim_data.values():
+            dev_type = cls.get_model(data["model_id"])
             dev = dev_type.get_device(address=data["address"], **kwargs)
             res.append(dev)
         return res
