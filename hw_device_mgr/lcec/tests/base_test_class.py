@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock, patch
 from ...ethercat.tests.base_test_class import BaseEtherCATTestClass
+from ...hal.tests.base_test_class import BaseHALTestClass
 from ..data_types import LCECDataType
 from ..sdo import LCECSDO
 from ..command import LCECSimCommand
@@ -13,7 +14,7 @@ from .bogus_devices.device import (
 )
 
 
-class BaseLCECTestClass(BaseEtherCATTestClass):
+class BaseLCECTestClass(BaseEtherCATTestClass, BaseHALTestClass):
 
     # Classes under test in this module
     data_type_class = LCECDataType
@@ -106,5 +107,5 @@ class BaseLCECTestClass(BaseEtherCATTestClass):
         patch.stopall()
 
     @pytest.fixture
-    def extra_fixtures(self, mock_ethercat_command):
+    def extra_fixtures(self, mock_ethercat_command, mock_hal, device_xml):
         pass
