@@ -186,13 +186,19 @@ class Device(abc.ABC):
             cls._registry_log.append(("no_name", cls))
             return  # Not a model
         model_id = cls.device_model_id()
+        registered = False
         for supercls in cls.category_classes():
             category = supercls.category
             # Ensure category is registered
             cls._category_registry.setdefault(category, supercls)
             # Check & register device id
             model_registry = cls._model_registry.setdefault(category, dict())
-            assert model_id not in model_registry
+            # Be sure model is registered in at least one category, but don't
+            # clobber earlier registrations
+            assert model_id not in model_registry or registered
+            if model_id in model_registry:
+                continue
+            registered = True
             model_registry[model_id] = cls
             # Register device name
             model_registry = cls._model_name_registry.setdefault(category, dict())

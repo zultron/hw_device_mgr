@@ -45,7 +45,7 @@ class BaseTestClass:
             assert dmc.name
             if dmc.test_category == test_category and dmc.name:
                 return dmc
-        return None  # E.g. IO module data in 402 test class
+        raise ValueError(f"No test category class '{test_category}'")
 
     @classmethod
     def munge_sim_device_data(cls, sim_device_data):

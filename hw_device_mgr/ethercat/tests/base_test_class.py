@@ -44,7 +44,9 @@ class BaseEtherCATTestClass(BaseCiA402TestClass):
     @pytest.fixture
     def device_xml(self, tmp_path):
         if self.device_class is BogusEtherCATDevice:
-            yield
+            yield  # Don't rewrite ESI files for top-level bogus device class
+        elif not issubclass(self.device_class, BogusEtherCATDevice):
+            yield  # Don't rewrite ESI files for non-bogus device classes
         elif self.device_class is not BogusEtherCATDevice:
             # Subclasses will have different product_code, so customize ESI file
             self.device_class.set_device_xml_dir(tmp_path)
