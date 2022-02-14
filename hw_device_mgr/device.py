@@ -161,9 +161,9 @@ class Device(abc.ABC):
         """
         Return unique device model identifier.
 
-        A unique ID that may be generated from bus scan results by which a
-        detected device's model class may be looked up, e.g. `(manufacturer_id,
-        model)`.
+        A unique ID that may be generated from bus scan results by which
+        a detected device's model class may be looked up, e.g.
+        `(manufacturer_id, model)`.
         """
         if not hasattr(cls, "model_id"):
             return None
@@ -173,7 +173,7 @@ class Device(abc.ABC):
     _registry_log = list()
 
     # { category : { model_id : device_class } }
-    _model_registry = dict()
+    _model_id_registry = dict()
 
     # { category : { model_name : device_class } }
     _model_name_registry = dict()
@@ -192,18 +192,17 @@ class Device(abc.ABC):
             # Ensure category is registered
             cls._category_registry.setdefault(category, supercls)
             # Check & register device id
-            model_registry = cls._model_registry.setdefault(category, dict())
+            reg = cls._model_id_registry.setdefault(category, dict())
             # Be sure model is registered in at least one category, but don't
             # clobber earlier registrations
-            assert model_id not in model_registry or registered
-            if model_id in model_registry:
-                continue
-            registered = True
-            model_registry[model_id] = cls
+            assert model_id not in reg or registered
+            if model_id not in reg:
+                registered = True
+                reg[model_id] = cls
             # Register device name
-            model_registry = cls._model_name_registry.setdefault(category, dict())
-            assert cls.name not in model_registry, f"{cls.name} in {category} registry"
-            model_registry[cls.name] = cls
+            reg = cls._model_name_registry.setdefault(category, dict())
+            assert cls.name not in reg, f"{cls.name} in {category} registry"
+            reg[cls.name] = cls
             cls._registry_log.append(
                 ("cat", cls.name, model_id, category, cls, supercls)
             )
@@ -221,8 +220,10 @@ class Device(abc.ABC):
     @classmethod
     def get_model(cls, model_id=None):
         category = cls.category
-        assert category in cls._model_registry, f"{category} not in {cls._model_registry}"
-        model_registry = cls._model_registry[category]
+        assert (
+            category in cls._model_id_registry
+        ), f"{category} not in {cls._model_id_registry}"
+        model_registry = cls._model_id_registry[category]
         if model_id is None:  # Return set of all model classes
             return set(model_registry.values())
         if model_id not in model_registry:

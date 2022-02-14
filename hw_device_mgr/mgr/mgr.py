@@ -16,6 +16,7 @@ class HWDeviceTimeout(RuntimeError):
 class HWDeviceMgrCategory(Device):
     category = "hw_device_mgr"
 
+
 class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
     data_type_class = CiA301DataType
     device_base_class = CiA402Device
@@ -75,7 +76,9 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
         super().init(**kwargs)
         self.logger.info("Initialization complete")
 
-    def init_devices(self, *, device_config, device_init_kwargs=dict(), **kwargs):
+    def init_devices(
+        self, *, device_config, device_init_kwargs=dict(), **kwargs
+    ):
         """
         Populate `HWDeviceMgr` instance `devices` attribute devices.
 

@@ -1,6 +1,9 @@
 from ...device import HALPinDevice
 from ....cia_402.tests.bogus_devices.device import (
-    BogusCiA402Device, BogusCiA402V1Servo, BogusCiA402V2Servo, BogusCiA402V1IO
+    BogusCiA402Device,
+    BogusCiA402V1Servo,
+    BogusCiA402V2Servo,
+    BogusCiA402V1IO,
 )
 
 

@@ -26,7 +26,6 @@ class BaseTestClass:
     # Sim mode by default
     sim = True
 
-
     @classmethod
     def load_yaml(cls, fname, return_path=False):
         p = Path(__file__).parent.parent.joinpath(fname)

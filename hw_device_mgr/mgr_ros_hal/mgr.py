@@ -10,7 +10,9 @@ class ROSHALHWDeviceMgr(ROSHWDeviceMgr, HALHWDeviceMgr):
     device_classes = ManagedDevices.get_model()
 
 
-class SimROSHALHWDeviceMgr(ROSHALHWDeviceMgr, SimROSHWDeviceMgr, SimHALHWDeviceMgr):
+class SimROSHALHWDeviceMgr(
+    ROSHALHWDeviceMgr, SimROSHWDeviceMgr, SimHALHWDeviceMgr
+):
 
     name = "sim_ros_lcec_hw_device_mgr"
     device_base_class = SimManagedLCECDevices

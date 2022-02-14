@@ -2,7 +2,8 @@ from ...mgr import SimHALHWDeviceMgr
 from ....lcec.device import LCECSimDevice
 from ....cia_402.device import CiA402SimDevice
 from ....devices.tests.devices import (
-    ElmoGold420, ElmoGold520,
+    ElmoGold420,
+    ElmoGold520,
     InovanceIS620N,
     InovanceSV660,
 )

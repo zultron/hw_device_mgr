@@ -1,6 +1,7 @@
 from ...mgr import SimROSHALHWDeviceMgr
 from ....mgr_hal.tests.bogus_devices.mgr import HALHWDeviceMgrForTest
 
+
 class ROSHWDeviceMgrForTest(SimROSHALHWDeviceMgr):
     device_base_class = HALHWDeviceMgrForTest.device_base_class
     device_classes = HALHWDeviceMgrForTest.device_classes

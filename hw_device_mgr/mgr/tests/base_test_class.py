@@ -12,6 +12,7 @@ from .bogus_devices.mgr import (
 
 class BaseMgrTestClass(BaseDevicesTestClass):
     """Base test class for `HWDeviceMgr` class."""
+
     # The HWDeviceMgr class under test inherits from the `Device` *base class*,
     # but this base test class inherits from classes used to test `Device`
     # *subclasses*, e.g. the `CiA301Device` class.  Those classes provide

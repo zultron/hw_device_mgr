@@ -7,4 +7,3 @@ class TestDevices(BaseDevicesTestClass, _TestLCECDevice):
         "DevicesForTest",
         *[n for n in _TestLCECDevice.expected_mro if not n.startswith("Bogus")],
     ]
-

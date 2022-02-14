@@ -18,7 +18,6 @@ class BaseDevicesTestClass(BaseLCECTestClass):
         InovanceIS620NForTest,
         InovanceSV660NForTest,
     )
-    device_model_sdo_clone = None
 
     device_config_yaml = "devices/tests/device_config.yaml"
     sim_device_data_yaml = "devices/tests/sim_devices.yaml"

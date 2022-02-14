@@ -36,7 +36,6 @@ class BaseCiA301TestClass(BaseTestClass):
         BogusCiA301V2Servo,
         BogusCiA301V1IO,
     )
-    device_model_sdo_clone = None
 
     # Whether to pass SDO data to device_class.init_sim()
     pass_init_sim_device_sdos = True
@@ -60,7 +59,8 @@ class BaseCiA301TestClass(BaseTestClass):
             device_cls = cls.test_category_class(conf["test_category"])
             assert device_cls
             new_device_config.append(conf)
-            conf["vendor_id"], conf["product_code"] = device_cls.device_model_id()
+            model_id = device_cls.device_model_id()
+            conf["vendor_id"], conf["product_code"] = model_id
         assert new_device_config  # Sanity check not empty
         return new_device_config
 
@@ -167,7 +167,10 @@ class BaseCiA301TestClass(BaseTestClass):
         `sim_device_data` attribute.
         """
         self.sim_device_data = _sim_device_data
-        model_id = _sim_device_data["vendor_id"], _sim_device_data["product_code"]
+        model_id = (
+            _sim_device_data["vendor_id"],
+            _sim_device_data["product_code"],
+        )
         _sim_device_data["test_model_id"] = model_id
         self.device_model_cls = device_cls.get_model(model_id)
         assert self.device_model_cls
@@ -234,7 +237,7 @@ class BaseCiA301TestClass(BaseTestClass):
         vals, ids = (list(), list())
         if "_sim_device_data" in metafunc.fixturenames:
             names.append("_sim_device_data")
-            assert "bus" not in metafunc.fixturenames  # use sim_device_data["bus"]
+            assert "bus" not in metafunc.fixturenames  # sim_device_data["bus"]
             if "_sdo_data" in metafunc.fixturenames:
                 names.append("_sdo_data")
             for dev in dev_data:

@@ -1,6 +1,9 @@
 from ...device import LCECSimDevice
 from ....ethercat.tests.bogus_devices.device import (
-    BogusEtherCATDevice, BogusEtherCATServo, BogusOtherCATServo, BogusEtherCATIO
+    BogusEtherCATDevice,
+    BogusEtherCATServo,
+    BogusOtherCATServo,
+    BogusEtherCATIO,
 )
 
 

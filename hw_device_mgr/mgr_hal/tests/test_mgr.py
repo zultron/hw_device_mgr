@@ -3,9 +3,7 @@ from ...mgr.tests.test_mgr import TestHWDeviceMgr as _TestHWDeviceMgr
 from ...hal.tests.test_device import TestHALDevice as _TestHALDevice
 
 
-class TestHALHWDeviceMgr(
-    BaseHALMgrTestClass, _TestHWDeviceMgr, _TestHALDevice
-):
+class TestHALHWDeviceMgr(BaseHALMgrTestClass, _TestHWDeviceMgr, _TestHALDevice):
     expected_mro = [
         "HALHWDeviceMgrForTest",
         "SimHALHWDeviceMgr",

@@ -260,4 +260,6 @@ class CiA301SimConfig(CiA301Config):
         sdo_data = dict()
         for address, data in sim_device_data.items():
             sdo_data[address] = cls._model_sdos[data["model_id"]]
-        cls.command_class.init_sim(sim_device_data=sim_device_data, sdo_data=sdo_data)
+        cls.command_class.init_sim(
+            sim_device_data=sim_device_data, sdo_data=sdo_data
+        )

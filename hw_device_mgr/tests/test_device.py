@@ -49,33 +49,57 @@ class TestDevice(BaseTestClass):
         category_cls_super = super(category_cls, category_cls)
         assert getattr(category_cls_super, "category ", None) != base.category
 
-    def test_model_registry(self, category_cls):
+    def test_model_registries(self, category_cls):
         print(f"Registry log:\n{pformat(self.device_class._registry_log)}")
 
         for model_cls in self.device_model_classes:
             model_id = model_cls.device_model_id()
+            id_registry = category_cls._model_id_registry
+            name = model_cls.name
+            name_registry = category_cls._model_name_registry
             print(f"model_cls:  {model_cls}")
             print(f"model_cls model_id:  {model_id}")
+            print(f"model_cls name:  {name}")
             print(f"dev cls category: {category_cls.category}")
-            print(f"dev cls registry:\n{pformat(category_cls._model_registry)}")
-            assert category_cls.category in category_cls._model_registry
-            model_registry = category_cls._model_registry[category_cls.category]
-            assert model_id in model_registry
-            registered = False
+            print(f"dev cls id registry:\n{pformat(id_registry)}")
+            print(f"dev cls name registry:\n{pformat(name_registry)}")
+            assert category_cls.category in id_registry
+            assert model_id in id_registry[category_cls.category]
+            assert category_cls.category in name_registry
+            assert name in name_registry[category_cls.category]
+            id_registered = False
+            name_registered = False
             for parent_cls in category_cls.__mro__:
                 if not hasattr(parent_cls, "category"):
                     break  # Parent class of `Device`
-                assert parent_cls.category in category_cls._model_registry
-                registry = category_cls._model_registry[parent_cls.category]
                 print(f"category: {parent_cls.category}")
-                print(f"registry:\n{pformat(registry)}")
-                assert registered or parent_cls.get_model(model_id) is model_cls
-                if "category" not in parent_cls.__dict__:
-                    continue
-                assert model_id in registry
-                assert registered or registry[model_id] == model_cls
-                registered = True
-            assert registered
+                # Check model_id_registry
+                assert parent_cls.category in id_registry
+                id_cat_reg = id_registry[parent_cls.category]
+                print(f"model_id_registry:\n{pformat(id_cat_reg)}")
+                assert (
+                    id_registered or parent_cls.get_model(model_id) is model_cls
+                )
+                if "category" in parent_cls.__dict__:
+                    assert model_id in id_cat_reg
+                    assert id_registered or id_cat_reg[model_id] is model_cls
+                    id_registered = True
+                # Check model name registry
+                assert parent_cls.category in name_registry
+                name_cat_reg = name_registry[parent_cls.category]
+                print(f"category: {parent_cls.category}")
+                print(f"model_name_registry:\n{pformat(name_cat_reg)}")
+                assert (
+                    name_registered
+                    or parent_cls.get_model_by_name(name) is model_cls
+                )
+                if "category" in parent_cls.__dict__:
+                    assert name in name_cat_reg
+                    assert name_registered or name_cat_reg[name] is model_cls
+                    name_registered = True
+
+            assert id_registered
+            assert name_registered
 
     def test_scan_devices(self, device_cls, all_device_data):
         devs = device_cls.scan_devices(sim=self.sim)
@@ -92,7 +116,9 @@ class TestDevice(BaseTestClass):
     @pytest.fixture
     def obj(self, device_cls, sim_device_data):
         self.sim_device_data = sim_device_data
-        self.obj = device_cls(address=sim_device_data["test_address"], sim=self.sim)
+        self.obj = device_cls(
+            address=sim_device_data["test_address"], sim=self.sim
+        )
         self.obj.init()
         yield self.obj
 

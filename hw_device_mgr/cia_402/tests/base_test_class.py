@@ -3,7 +3,7 @@ from .bogus_devices.device import (
     BogusCiA402Device,
     BogusCiA402V1Servo,
     BogusCiA402V2Servo,
-    BogusCiA402V1IO
+    BogusCiA402V1IO,
 )
 
 
@@ -14,4 +14,8 @@ class BaseCiA402TestClass(BaseCiA301TestClass):
 
     # Classes under test in this module
     device_class = BogusCiA402Device
-    device_model_classes = (BogusCiA402V1Servo, BogusCiA402V2Servo, BogusCiA402V1IO)
+    device_model_classes = (
+        BogusCiA402V1Servo,
+        BogusCiA402V2Servo,
+        BogusCiA402V1IO,
+    )

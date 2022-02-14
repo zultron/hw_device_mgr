@@ -27,12 +27,13 @@ class BaseEtherCATTestClass(BaseCiA402TestClass):
         BogusEtherCATIO,
     )
     sdo_model_id_clone = tuple(
-        [EtherCATSimConfig.format_model_id(mid) for mid in
-         (
-             (0x00B090C0, 0xB0905030),
-             (0x00B090C0, 0xB0905031),
-             (0x00B090C0, 0xB0901030),
-         )
+        [
+            EtherCATSimConfig.format_model_id(mid)
+            for mid in (
+                (0x00B090C0, 0xB0905030),
+                (0x00B090C0, 0xB0905031),
+                (0x00B090C0, 0xB0901030),
+            )
         ]
     )
     pass_init_sim_device_sdos = False  # SDO data from ESI file
@@ -51,12 +52,15 @@ class BaseEtherCATTestClass(BaseCiA402TestClass):
             # Subclasses will have different product_code, so customize ESI file
             self.device_class.set_device_xml_dir(tmp_path)
             finished_paths = set()
-            re_str = '|'.join(fr'{pc[1]:08X}' for pc in self.sdo_model_id_clone)
-            re_str = r'#x(' + re_str + r')'
+            re_str = "|".join(rf"{pc[1]:08X}" for pc in self.sdo_model_id_clone)
+            re_str = r"#x(" + re_str + r")"
             pat = re.compile(re_str)
             # Map of orig ESI file product code to new ESI file product code
-            cm = {k[1]:v.device_model_id()[1] for k,v in self.model_id_clone_map.items()}
-            repl = lambda m: f'#x{cm[int(m.group(1), 16)]}'
+            cm = {
+                k[1]: v.device_model_id()[1]
+                for k, v in self.model_id_clone_map.items()
+            }
+            repl = lambda m: f"#x{cm[int(m.group(1), 16)]}"
             for id_orig, cls in self.model_id_clone_map.items():
                 esi_orig = cls.orig_xml_description_path()
                 esi_new = cls.xml_description_path()

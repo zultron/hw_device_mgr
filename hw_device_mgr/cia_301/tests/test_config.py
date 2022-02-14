@@ -15,7 +15,7 @@ class TestCiA301Config(BaseCiA301TestClass):
     def obj(self, sim_device_data, config_cls):
         self.obj = config_cls(
             address=sim_device_data["test_address"],
-            model_id=sim_device_data["test_model_id"]
+            model_id=sim_device_data["test_model_id"],
         )
         yield self.obj
 

@@ -109,7 +109,9 @@ class SimROSHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
         assert os.path.exists(
             sim_device_data_path
         ), f"Device data path doesn't exist:  '{sim_device_data_path}'"
-        self.logger.info(f"Reading sim device config from {sim_device_data_path}")
+        self.logger.info(
+            f"Reading sim device config from {sim_device_data_path}"
+        )
         with open(sim_device_data_path, "r") as f:
             sim_device_data = yaml.safe_load(f)
         self.init_sim(sim_device_data=sim_device_data, **kwargs)

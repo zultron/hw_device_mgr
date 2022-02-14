@@ -26,7 +26,9 @@ class BaseROSMgrTestClass(BaseMgrTestClass):
     device_model_classes = ROSHWDeviceMgrForTest.device_classes
 
     @pytest.fixture
-    def extra_fixtures(self, manager_ros_params, sim_device_data_path, device_config_path):
+    def extra_fixtures(
+        self, manager_ros_params, sim_device_data_path, device_config_path
+    ):
         pass
 
     @pytest.fixture

@@ -176,7 +176,10 @@ class CiA301SimDevice(CiA301Device, SimDevice):
 
     @classmethod
     def sim_device_data_class(cls, sim_device_data):
-        model_id = (sim_device_data["vendor_id"], sim_device_data["product_code"])
+        model_id = (
+            sim_device_data["vendor_id"],
+            sim_device_data["product_code"],
+        )
         return cls.get_model(model_id)
 
     @classmethod
@@ -188,6 +191,6 @@ class CiA301SimDevice(CiA301Device, SimDevice):
     @classmethod
     def init_sim(cls, *, sim_device_data, sdo_data):
         super().init_sim(sim_device_data=sim_device_data)
-        sim_device_data=cls._sim_device_data[cls.category]
+        sim_device_data = cls._sim_device_data[cls.category]
         cls.add_device_sdos(sdo_data)
         cls.config_class.init_sim(sim_device_data=sim_device_data)

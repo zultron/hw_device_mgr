@@ -1,6 +1,7 @@
 from ...mgr_hal.tests.base_test_class import BaseHALMgrTestClass
 from ...mgr_ros.tests.base_test_class import BaseROSMgrTestClass
 from .bogus_devices.mgr import ROSHWDeviceMgrForTest
+
 # from ...devices.tests.test_devices_402 import Test402Devices as _Test402Devices
 import pytest
 
@@ -20,7 +21,10 @@ class BaseROSHALMgrTestClass(BaseROSMgrTestClass, BaseHALMgrTestClass):
     @pytest.fixture
     def extra_fixtures(
         self,
-        manager_ros_params, sim_device_data_path, device_config_path,
-        mock_hal, mock_ethercat_command
+        manager_ros_params,
+        sim_device_data_path,
+        device_config_path,
+        mock_hal,
+        mock_ethercat_command,
     ):
         pass
