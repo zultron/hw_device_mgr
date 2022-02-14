@@ -7,20 +7,14 @@ class TestHALHWDeviceMgr(
     BaseLCEC402MgrTestClass, _TestHWDeviceMgr, _TestHALDevice
 ):
     expected_mro = [
-        "BogusLCEC402HWDeviceMgr",
+        "HALHWDeviceMgrForTest",
         "SimHALHWDeviceMgr",
         "HALHWDeviceMgr",
-        "BogusHWDeviceMgr",
-        "SimHWDeviceMgr",
-        "HWDeviceMgr",
-        "FysomGlobalMixin",
-        "HALCompDevice",
-        "HALPinDevice",
-        "SimDevice",
-        "Device",
-        "ABC",
-        "HALMixin",
-        "object",
+        *_TestHWDeviceMgr.expected_mro[1:4],
+        "HALCompDevice",  # HALHWDeviceMgr is a HAL comp
+        _TestHALDevice.expected_mro[1],  # HALPinDevice
+        *_TestHWDeviceMgr.expected_mro[4:-1],
+        *_TestHALDevice.expected_mro[-2:],  # HalMixin, etc.
     ]
 
     def override_interface_param(self, interface, key, val):
