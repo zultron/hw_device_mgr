@@ -10,14 +10,14 @@ class BogusDevice(EtherCATSimDevice, CiA402SimDevice):
     xml_description_fname = "BogusServo.xml"
 
 
-class BogusServo(BogusDevice):
+class BogusV1Servo(BogusDevice):
     """Bogus Device Co V1 servo drive."""
 
     product_code = 0xB0905030
     name = "bogus_v1_servo_drive"
 
 
-class BogusServo(BogusDevice):
+class BogusV2Servo(BogusDevice):
     """Bogus Device Co V2 servo drive."""
 
     product_code = 0xB0905031

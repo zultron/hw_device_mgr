@@ -5,7 +5,7 @@ from ..cia_402.device import CiA402Device, CiA402SimDevice
 from ..devices.elmo_gold import ElmoGold420, ElmoGold520
 from ..devices.inovance_is620n import InovanceIS620N
 from ..devices.inovance_sv660 import InovanceSV660
-from ..devices.bogus import BogusServo
+from ..devices.bogus import BogusV1Servo, BogusV2Servo
 
 
 class ManagedDevices(LCECDevice, CiA402Device, HALPinDevice):
@@ -32,8 +32,12 @@ class SimManagedLCECDevices(LCECSimDevice, CiA402SimDevice, HALPinDevice):
     category = "sim_lcec_managed_devices"
 
 
-class BogusServoSimLCEC(SimManagedLCECDevices, BogusServo):
-    name = "bogus_servo_drive_sim_lcec"
+class BogusV1ServoSimLCEC(SimManagedLCECDevices, BogusV1Servo):
+    name = "bogus_v1_servo_drive_sim_lcec"
+
+
+class BogusV2ServoSimLCEC(SimManagedLCECDevices, BogusV2Servo):
+    name = "bogus_v2_servo_drive_sim_lcec"
 
 
 class ElmoGold420SimLCEC(SimManagedLCECDevices, ElmoGold420):
