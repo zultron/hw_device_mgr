@@ -29,8 +29,6 @@ class BaseTestClass:
     # Sim mode by default
     sim = True
 
-    # Whether to test IO devices (CiA402 only applies to servos)
-    test_io_devices = True
 
     @classmethod
     def load_yaml(cls, fname, return_path=False):
@@ -69,22 +67,20 @@ class BaseTestClass:
         assert new_sim_device_data  # Sanity:  have test cases
         return new_sim_device_data
 
-    def init_sim(self, **kwargs):
-        # Only init_sim once
-        assert not getattr(self, "_sim_initialized", False)
-        self._sim_initialized = True
+    @classmethod
+    def init_sim(cls, **kwargs):
+        kwargs["sim_device_data"] = cls.init_sim_device_data()
+        cls.device_class.clear_devices()
+        cls.device_class.init_sim(**kwargs)
 
-        dev_data = self.init_sim_device_data()
-        self.device_class.clear_devices()
-        self.device_class.init_sim(sim_device_data=dev_data, **kwargs)
-
-    def init_sim_device_data(self):
+    @classmethod
+    def init_sim_device_data(cls):
         # Set up sim devices:  munge YAML data & pass to sim device class
-        self.sim_device_data_path, dev_data = self.load_yaml(
-            self.sim_device_data_yaml, True
+        cls.sim_device_data_path, dev_data = cls.load_yaml(
+            cls.sim_device_data_yaml, True
         )
-        print(f"  loaded sim_device_data from {self.sim_device_data_path}")
-        return self.munge_sim_device_data(dev_data)
+        print(f"  Raw sim_device_data from {cls.sim_device_data_path}")
+        return cls.munge_sim_device_data(dev_data)
 
     @pytest.fixture
     def device_cls(self):

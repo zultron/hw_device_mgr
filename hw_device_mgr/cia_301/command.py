@@ -93,7 +93,7 @@ class CiA301SimCommand(CiA301Command):
         sdo = self.sim_sdo_data[address][index, subindex]
         val = self.sim_sdo_values[address][index, subindex]
         assert datatype is sdo.data_type
-        return val
+        return val or 0
 
     def download(
         self,

@@ -1,15 +1,21 @@
 from ...mgr import SimROSHWDeviceMgr
-from ....mgr.tests.bogus_devices.mgr import BogusHWDeviceMgr
-from ....ethercat.tests.bogus_devices.device_402 import (
-    BogusEtherCAT402Device,
-    BogusEtherCAT402Servo,
-    BogusOtherCAT402Servo,
+from ....mgr.tests.bogus_devices.mgr import (
+    HWDeviceMgrForTest,
+    HwMgrTestDevices,
+    HwMgrTestElmoGold420, HwMgrTestElmoGold520,
+    HwMgrTestInovanceIS620N,
+    HwMgrTestInovanceSV660N,
 )
 
 
-class BogusROSHWDeviceMgr(SimROSHWDeviceMgr, BogusHWDeviceMgr):
-    data_type_class = BogusEtherCAT402Device.data_type_class
-    device_base_class = BogusEtherCAT402Device
-    device_classes = (BogusEtherCAT402Servo, BogusOtherCAT402Servo)
+class ROSHWDeviceMgrForTest(SimROSHWDeviceMgr):
+    # data_type_class = HwMgrTestDevices.data_type_class
+    device_base_class = HwMgrTestDevices
+    device_classes = (
+        HwMgrTestElmoGold420,
+        HwMgrTestElmoGold520,
+        HwMgrTestInovanceIS620N,
+        HwMgrTestInovanceSV660N,
+    )
 
-    name = "bogus_ros_hw_device_mgr"
+    name = "ros_hw_device_mgr_for_test"

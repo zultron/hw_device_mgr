@@ -15,6 +15,6 @@ if __name__ == "__main__":
         mgr = ROSHALHWDeviceMgr()
     mgr.init(argv)
     if sim:
-        mgr.init_sim()
+        mgr.init_sim_from_rosparams()
     mgr.init_devices()
     mgr.run()

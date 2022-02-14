@@ -16,7 +16,7 @@ class HWDeviceTimeout(RuntimeError):
 class HWDeviceMgrCategory(Device):
     category = "hw_device_mgr"
 
-class HWDeviceMgr(HWDeviceMgrCategory, FysomGlobalMixin):
+class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
     data_type_class = CiA301DataType
     device_base_class = CiA402Device
     device_classes = (CiA402Device,)

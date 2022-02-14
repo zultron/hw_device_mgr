@@ -37,19 +37,19 @@ class BaseCiA301TestClass(BaseTestClass):
         BogusCiA301V1IO,
     )
     device_model_sdo_clone = None
-    load_device_sdos_yaml = True  # EtherCAT classes get SDO data from ESI file
 
-    def init_sim(self):
-        init_sim_kwargs = dict()
-        if self.load_device_sdos_yaml:
+    # Whether to pass SDO data to device_class.init_sim()
+    pass_init_sim_device_sdos = True
+
+    @classmethod
+    def init_sim(cls, **kwargs):
+        if cls.pass_init_sim_device_sdos:
             # Init sim SDO data
-            path, sdo_data = self.load_yaml(self.device_sdos_yaml, True)
-            print(f"  loaded sdo_data from {path}")
-            sdo_data = self.munge_sdo_data(sdo_data)
-            # print("sdo_data:", sdo_data)  # FIXME
-            init_sim_kwargs["sdo_data"] = sdo_data
+            path, sdo_data = cls.load_yaml(cls.device_sdos_yaml, True)
+            print(f"  Raw sdo_data from {path}")
+            kwargs["sdo_data"] = cls.munge_sdo_data(sdo_data)
         # Init sim device data
-        super().init_sim(**init_sim_kwargs)
+        super().init_sim(**kwargs)
 
     @classmethod
     def munge_device_config(cls, device_config):
@@ -104,7 +104,7 @@ class BaseCiA301TestClass(BaseTestClass):
         listed; this fixture will re-add those keys.
         """
         path, dev_conf = self.load_yaml(self.device_config_yaml, True)
-        print(f"  loaded device_config from {path}")
+        print(f"  Raw device_config from {path}")
         dev_conf = self.munge_device_config(dev_conf)
         self.device_config = dev_conf
         self.device_config_path = path

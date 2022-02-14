@@ -10,12 +10,9 @@ class TestHWDeviceMgr(BaseMgrTestClass, _TestDevice):
         "HWDeviceMgrForTest",
         "SimHWDeviceMgr",
         "HWDeviceMgr",
-        "HWDeviceMgrCategory",
-        "SimDevice",
-        "Device",
-        "ABC",
         "FysomGlobalMixin",
-        "object",
+        "HWDeviceMgrCategory",
+        *_TestDevice.expected_mro[1:],
     ]
 
     tc_is_category = False

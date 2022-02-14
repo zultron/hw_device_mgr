@@ -10,10 +10,10 @@ class TestHALHWDeviceMgr(
         "HALHWDeviceMgrForTest",
         "SimHALHWDeviceMgr",
         "HALHWDeviceMgr",
-        *_TestHWDeviceMgr.expected_mro[1:4],
+        *_TestHWDeviceMgr.expected_mro[1:4],  # HALHWDeviceMgr inserted...
         "HALCompDevice",  # HALHWDeviceMgr is a HAL comp
         _TestHALDevice.expected_mro[1],  # HALPinDevice
-        *_TestHWDeviceMgr.expected_mro[4:-1],
+        *_TestHWDeviceMgr.expected_mro[4:-1],  # ...more base mgr class...
         *_TestHALDevice.expected_mro[-2:],  # HalMixin, etc.
     ]
 

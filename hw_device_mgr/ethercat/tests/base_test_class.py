@@ -35,7 +35,7 @@ class BaseEtherCATTestClass(BaseCiA402TestClass):
          )
         ]
     )
-    load_device_sdos_yaml = False  # SDO data from ESI file
+    pass_init_sim_device_sdos = False  # SDO data from ESI file
 
     @property
     def model_id_clone_map(self):
