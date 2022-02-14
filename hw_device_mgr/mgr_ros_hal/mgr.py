@@ -1,6 +1,6 @@
 from ..mgr_hal.mgr import HALHWDeviceMgr, SimHALHWDeviceMgr
 from ..mgr_ros.mgr import ROSHWDeviceMgr, SimROSHWDeviceMgr
-from .devices import ManagedDevices, SimManagedLCECDevices
+from .devices import ManagedDevices, SimManagedEtherCATDevices
 
 
 class ROSHALHWDeviceMgr(ROSHWDeviceMgr, HALHWDeviceMgr):
@@ -14,6 +14,6 @@ class SimROSHALHWDeviceMgr(
     ROSHALHWDeviceMgr, SimROSHWDeviceMgr, SimHALHWDeviceMgr
 ):
 
-    name = "sim_ros_lcec_hw_device_mgr"
-    device_base_class = SimManagedLCECDevices
-    device_classes = SimManagedLCECDevices.get_model()
+    name = "sim_ros_ethercat_hw_device_mgr"
+    device_base_class = SimManagedEtherCATDevices
+    device_classes = SimManagedEtherCATDevices.get_model()
