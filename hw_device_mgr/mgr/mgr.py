@@ -13,7 +13,10 @@ class HWDeviceTimeout(RuntimeError):
     pass
 
 
-class HWDeviceMgr(FysomGlobalMixin, Device):
+class HWDeviceMgrCategory(Device):
+    category = "hw_device_mgr"
+
+class HWDeviceMgr(HWDeviceMgrCategory, FysomGlobalMixin):
     data_type_class = CiA301DataType
     device_base_class = CiA402Device
     device_classes = (CiA402Device,)
@@ -72,7 +75,7 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         super().init(**kwargs)
         self.logger.info("Initialization complete")
 
-    def init_devices(self, device_config=None, **kwargs):
+    def init_devices(self, *, device_config, device_init_kwargs=dict(), **kwargs):
         """
         Populate `HWDeviceMgr` instance `devices` attribute devices.
 
@@ -86,7 +89,7 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         self.init_device_classes(device_config=device_config)
         kwargs.setdefault("sim", self.sim)
         self.devices = self.scan_devices(**kwargs)
-        self.init_device_instances()
+        self.init_device_instances(**device_init_kwargs)
 
     def init_device_classes(self, device_config=None):
         assert device_config
@@ -664,6 +667,6 @@ class SimHWDeviceMgr(HWDeviceMgr, SimDevice):
     device_base_class = CiA402SimDevice
     device_classes = CiA402SimDevice.get_model()
 
-    def init_sim(self, sim_device_data=dict()):
-        assert sim_device_data
-        self.device_base_class.init_sim(sim_device_data=sim_device_data)
+    @classmethod
+    def init_sim(cls, *, sim_device_data):
+        cls.device_base_class.init_sim(sim_device_data=sim_device_data)

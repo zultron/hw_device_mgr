@@ -86,13 +86,16 @@ class BaseTestClass:
         print(f"  loaded sim_device_data from {self.sim_device_data_path}")
         return self.munge_sim_device_data(dev_data)
 
-
     @pytest.fixture
     def device_cls(self):
         """Fixture for configured Device class."""
-        # Sideload device data into test class
         self.init_sim()
         yield self.device_class
+
+    @pytest.fixture
+    def category_cls(self, device_cls):
+        """Fixture for Device class category."""
+        yield device_cls
 
     @pytest.fixture
     def all_device_data(self, device_cls):

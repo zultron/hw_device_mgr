@@ -24,5 +24,5 @@ class TestLCECDevice(BaseLCECTestClass, _TestEtherCATDevice, _TestHALDevice):
         self.obj = self.device_model_cls(
             address=sim_device_data["test_address"], sim=self.sim
         )
-        self.obj.init(mock_halcomp)
+        self.obj.init(comp=mock_halcomp)
         yield self.obj

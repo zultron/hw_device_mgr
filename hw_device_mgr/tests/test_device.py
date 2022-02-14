@@ -47,28 +47,28 @@ class TestDevice(BaseTestClass):
         category_cls_super = super(category_cls, category_cls)
         assert getattr(category_cls_super, "category ", None) != base.category
 
-    def test_model_registry(self, device_cls):
+    def test_model_registry(self, category_cls):
         print(f"Registry log:\n{pformat(self.device_class._registry_log)}")
 
         for model_cls in self.device_model_classes:
             model_id = model_cls.device_model_id()
             print(f"model_cls:  {model_cls}")
             print(f"model_cls model_id:  {model_id}")
-            print(f"dev cls category: {device_cls.category}")
-            print(f"dev cls registry:\n{pformat(device_cls._model_registry)}")
-            assert device_cls.category in device_cls._model_registry
-            model_registry = device_cls._model_registry[device_cls.category]
+            print(f"dev cls category: {category_cls.category}")
+            print(f"dev cls registry:\n{pformat(category_cls._model_registry)}")
+            assert category_cls.category in category_cls._model_registry
+            model_registry = category_cls._model_registry[category_cls.category]
             assert model_id in model_registry
             registered = False
-            for category_cls in device_cls.__mro__:
-                if not hasattr(category_cls, "category"):
+            for parent_cls in category_cls.__mro__:
+                if not hasattr(parent_cls, "category"):
                     break  # Parent class of `Device`
-                assert category_cls.category in device_cls._model_registry
-                registry = device_cls._model_registry[category_cls.category]
-                print(f"category: {category_cls.category}")
+                assert parent_cls.category in category_cls._model_registry
+                registry = category_cls._model_registry[parent_cls.category]
+                print(f"category: {parent_cls.category}")
                 print(f"registry:\n{pformat(registry)}")
-                assert registered or category_cls.get_model(model_id) is model_cls
-                if "category" not in category_cls.__dict__:
+                assert registered or parent_cls.get_model(model_id) is model_cls
+                if "category" not in parent_cls.__dict__:
                     continue
                 assert model_id in registry
                 assert registered or registry[model_id] == model_cls

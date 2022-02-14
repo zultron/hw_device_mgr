@@ -26,7 +26,7 @@ class HALPinDevice(Device, HALMixin):
     def pin_name(self, interface, pname):
         return self.pin_prefix + self.pin_interfaces[interface][1] + pname
 
-    def init(self, comp=None, **kwargs):
+    def init(self, *, comp, **kwargs):
         super().init(**kwargs)
         self.comp = comp
 

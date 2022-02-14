@@ -40,25 +40,21 @@ class BaseCiA301TestClass(BaseTestClass):
     load_device_sdos_yaml = True  # EtherCAT classes get SDO data from ESI file
 
     def init_sim(self):
+        init_sim_kwargs = dict()
         if self.load_device_sdos_yaml:
-            # Sim device & SDO data
+            # Init sim SDO data
             path, sdo_data = self.load_yaml(self.device_sdos_yaml, True)
+            print(f"  loaded sdo_data from {path}")
             sdo_data = self.munge_sdo_data(sdo_data)
-            super().init_sim(sdo_data=sdo_data)
-        else:
-            super().init_sim()
-        # Device config
-        self.init_device_config()
-
-    def init_device_config(self):
-        # Device config
-        self.config_class._device_config.clear()
-        path, dev_conf = self.load_yaml(self.device_config_yaml, True)
-        dev_conf = self.munge_device_config(device_config=dev_conf)
-        self.device_class.set_device_config(dev_conf)
+            # print("sdo_data:", sdo_data)  # FIXME
+            init_sim_kwargs["sdo_data"] = sdo_data
+        # Init sim device data
+        super().init_sim(**init_sim_kwargs)
 
     @classmethod
-    def munge_device_config(cls, *, device_config):
+    def munge_device_config(cls, device_config):
+        # Make device_config.yaml reusable by monkey-patching device vendor_id
+        # and product_code keys based on test_category key
         new_device_config = list()
         for conf in device_config:
             device_cls = cls.test_category_class(conf["test_category"])
@@ -75,12 +71,13 @@ class BaseCiA301TestClass(BaseTestClass):
         pass
 
     @pytest.fixture
-    def device_cls(self, extra_fixtures):
+    def device_cls(self, device_config, extra_fixtures):
         self.init_sim()
+        self.device_class.set_device_config(device_config)
         yield self.device_class
 
     @pytest.fixture
-    def config_cls(self, device_cls):
+    def config_cls(self, device_cls, device_config):
         yield self.config_class
 
     @pytest.fixture
@@ -88,7 +85,7 @@ class BaseCiA301TestClass(BaseTestClass):
         yield self.command_class
 
     @pytest.fixture
-    def device_config(self, device_cls, request):
+    def device_config(self):
         """
         Device configuration data fixture.
 
@@ -106,8 +103,12 @@ class BaseCiA301TestClass(BaseTestClass):
         replaced with a `category` key matching a parent of classes
         listed; this fixture will re-add those keys.
         """
-        request.instance.device_config = self.config_class._device_config
-        yield request.instance.device_config
+        path, dev_conf = self.load_yaml(self.device_config_yaml, True)
+        print(f"  loaded device_config from {path}")
+        dev_conf = self.munge_device_config(dev_conf)
+        self.device_config = dev_conf
+        self.device_config_path = path
+        yield dev_conf
 
     @pytest.fixture
     def all_device_data(self, device_cls, request):
