@@ -24,12 +24,12 @@ class HwMgrTestElmoGold520(HwMgrTestDevices, ElmoGold520):
 
 class HwMgrTestInovanceIS620N(HwMgrTestDevices, InovanceIS620N):
     name = "IS620N_ECAT_hw_mgr_test"
-    test_category = "inovance_sv660n_test"
+    test_category = "inovance_is620n_test"
 
 
 class HwMgrTestInovanceSV660N(HwMgrTestDevices, InovanceSV660):
     name = "SV660_ECAT_hw_mgr_test"
-    test_category = "inovance_is620n_test"
+    test_category = "inovance_sv660n_test"
 
 
 class HWDeviceMgrForTest(SimHWDeviceMgr):

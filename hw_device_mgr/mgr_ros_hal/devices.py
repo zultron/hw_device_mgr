@@ -15,18 +15,22 @@ class ManagedDevices(LCECDevice, CiA402Device, HALPinDevice):
 
 class ElmoGold420LCEC(ElmoGold420, ManagedDevices):
     product_code = 0x20030924
+    name = "elmo_gold_420_lcec"
 
 
 class ElmoGold520LCEC(ElmoGold520, ManagedDevices):
     product_code = 0x20030925
+    name = "elmo_gold_520_lcec"
 
 
 class InovanceIS620NLCEC(InovanceIS620N, ManagedDevices):
     product_code = 0x200C0108
+    name = "inovance_is620n_lcec"
 
 
 class InovanceSV660LCEC(InovanceSV660, ManagedDevices):
     product_code = 0x200C010D
+    name = "inovance_sv660n_lcec"
 
 
 class SimManagedLCECDevices(LCECSimDevice, CiA402SimDevice, HALPinDevice):
@@ -35,46 +39,24 @@ class SimManagedLCECDevices(LCECSimDevice, CiA402SimDevice, HALPinDevice):
 
 class BogusServoSimLCEC(BogusServo, SimManagedLCECDevices):
     product_code = 0xB09050F2
+    name = "bogus_servo_drive_sim_lcec"
 
 
 class ElmoGold420SimLCEC(ElmoGold420, SimManagedLCECDevices):
     product_code = 0x30030924
+    name = "elmo_gold_420_sim_lcec"
 
 
 class ElmoGold520SimLCEC(ElmoGold520, SimManagedLCECDevices):
     product_code = 0x30030925
+    name = "elmo_gold_520_sim_lcec"
 
 
 class InovanceIS620NSimLCEC(InovanceIS620N, SimManagedLCECDevices):
     product_code = 0x300C0108
+    name = "inovance_is620n_sim_lcec"
 
 
 class InovanceSV660SimLCEC(InovanceSV660, SimManagedLCECDevices):
     product_code = 0x300C010D
-
-
-class SimManagedEtherCATDevices(
-    EtherCATSimDevice, CiA402SimDevice, HALPinDevice
-):
-    category = "sim_ethercat_managed_devices"
-    data_type_class = HALDataType
-
-
-class BogusServoSimEtherCAT(BogusServo, SimManagedEtherCATDevices):
-    product_code = 0xB09050F3
-
-
-class ElmoGold420SimEtherCAT(ElmoGold420, SimManagedEtherCATDevices):
-    product_code = 0x40030924
-
-
-class ElmoGold520SimEtherCAT(ElmoGold520, SimManagedEtherCATDevices):
-    product_code = 0x40030925
-
-
-class InovanceIS620NSimEtherCAT(InovanceIS620N, SimManagedEtherCATDevices):
-    product_code = 0x400C0108
-
-
-class InovanceSV660SimEtherCAT(InovanceSV660, SimManagedEtherCATDevices):
-    product_code = 0x400C010D
+    name = "inovance_sv660n_sim_lcec"

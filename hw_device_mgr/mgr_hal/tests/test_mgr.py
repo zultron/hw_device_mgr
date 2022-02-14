@@ -1,19 +1,19 @@
-from .base_test_class import BaseLCEC402MgrTestClass
+from .base_test_class import BaseHALMgrTestClass
 from ...mgr.tests.test_mgr import TestHWDeviceMgr as _TestHWDeviceMgr
 from ...hal.tests.test_device import TestHALDevice as _TestHALDevice
 
 
 class TestHALHWDeviceMgr(
-    BaseLCEC402MgrTestClass, _TestHWDeviceMgr, _TestHALDevice
+    BaseHALMgrTestClass, _TestHWDeviceMgr, _TestHALDevice
 ):
     expected_mro = [
         "HALHWDeviceMgrForTest",
         "SimHALHWDeviceMgr",
         "HALHWDeviceMgr",
-        *_TestHWDeviceMgr.expected_mro[1:4],  # HALHWDeviceMgr inserted...
+        *_TestHWDeviceMgr.expected_mro[1:5],  # HALHWDeviceMgr inserted...
         "HALCompDevice",  # HALHWDeviceMgr is a HAL comp
         _TestHALDevice.expected_mro[1],  # HALPinDevice
-        *_TestHWDeviceMgr.expected_mro[4:-1],  # ...more base mgr class...
+        *_TestHWDeviceMgr.expected_mro[5:-1],  # ...more base mgr class...
         *_TestHALDevice.expected_mro[-2:],  # HalMixin, etc.
     ]
 

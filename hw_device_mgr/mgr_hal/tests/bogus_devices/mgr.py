@@ -9,7 +9,7 @@ from ....devices.tests.devices import (
 
 
 class HALHWMgrTestDevices(LCECSimDevice, CiA402SimDevice):
-    category = "hw_mgr_hal_test_devices"
+    category = "hal_hw_mgr_test_devices"
 
 
 class HALHWMgrTestElmoGold420(HALHWMgrTestDevices, ElmoGold420):

@@ -8,20 +8,9 @@ class TestROSHWDeviceMgr(
 ):
 
     expected_mro = [
-        "BogusHALROSHWDeviceMgr",
-        "SimROSEtherCATHWDeviceMgr",
+        "ROSHWDeviceMgrForTest",
+        "SimROSHALHWDeviceMgr",
         "ROSHALHWDeviceMgr",
-        "SimROSHWDeviceMgr",
-        "ROSHWDeviceMgr",
-        "HALHWDeviceMgr",
-        "SimHWDeviceMgr",
-        "HWDeviceMgr",
-        "FysomGlobalMixin",
-        "HALCompDevice",
-        "HALPinDevice",
-        "SimDevice",
-        "Device",
-        "ABC",
-        "HALMixin",
-        "object",
+        *_TestROSHWDeviceMgr.expected_mro[1:3],
+        *_TestHALHWDeviceMgr.expected_mro[1:],
     ]

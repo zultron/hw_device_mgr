@@ -9,7 +9,6 @@ from ....mgr.tests.bogus_devices.mgr import (
 
 
 class ROSHWDeviceMgrForTest(SimROSHWDeviceMgr):
-    # data_type_class = HwMgrTestDevices.data_type_class
     device_base_class = HwMgrTestDevices
     device_classes = (
         HwMgrTestElmoGold420,

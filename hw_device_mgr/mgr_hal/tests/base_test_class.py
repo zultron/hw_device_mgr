@@ -4,7 +4,7 @@ from .bogus_devices.mgr import HALHWDeviceMgrForTest
 import pytest
 
 
-class BaseLCEC402MgrTestClass(BaseMgrTestClass, BaseLCECTestClass):
+class BaseHALMgrTestClass(BaseMgrTestClass, BaseLCECTestClass):
     """Base test class for `HALHWDeviceMgr` class."""
 
     # Manager class
