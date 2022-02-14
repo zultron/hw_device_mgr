@@ -1,7 +1,6 @@
 # Real devices under LCEC
-from ..hal.device import HALPinDevice, HALDataType
+from ..hal.device import HALPinDevice
 from ..lcec.device import LCECDevice, LCECSimDevice
-from ..ethercat.device import EtherCATSimDevice
 from ..cia_402.device import CiA402Device, CiA402SimDevice
 from ..devices.elmo_gold import ElmoGold420, ElmoGold520
 from ..devices.inovance_is620n import InovanceIS620N

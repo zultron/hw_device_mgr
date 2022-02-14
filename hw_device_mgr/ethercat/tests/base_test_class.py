@@ -60,7 +60,6 @@ class BaseEtherCATTestClass(BaseCiA402TestClass):
                 k[1]: v.device_model_id()[1]
                 for k, v in self.model_id_clone_map.items()
             }
-            repl = lambda m: f"#x{cm[int(m.group(1), 16)]}"
             for id_orig, cls in self.model_id_clone_map.items():
                 esi_orig = cls.orig_xml_description_path()
                 esi_new = cls.xml_description_path()
@@ -71,7 +70,9 @@ class BaseEtherCATTestClass(BaseCiA402TestClass):
                 with open(esi_orig) as f_orig:
                     with open(esi_new, "w") as f_new:
                         for line in f_orig:
-                            line = pat.sub(repl, line)
+                            line = pat.sub(
+                                lambda m: f"#x{cm[int(m.group(1), 16)]}", line
+                            )
                             f_new.write(line)
                 print(f"Wrote ESI file to {esi_new}")
                 print(f"  Original in {esi_orig}")

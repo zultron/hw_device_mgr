@@ -286,7 +286,6 @@ class SimDevice(Device):
     @classmethod
     def init_sim(cls, *, sim_device_data):
         """Massage device test data for usability."""
-        # assert cls.category not in cls._sim_device_data, f"{cls.category} in {cls._sim_device_data.keys()}"
         cls_sim_data = cls._sim_device_data[cls.category] = dict()
 
         for dev in sim_device_data:

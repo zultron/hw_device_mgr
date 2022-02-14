@@ -1,6 +1,5 @@
 from ...mgr import SimROSHWDeviceMgr
 from ....mgr.tests.bogus_devices.mgr import (
-    HWDeviceMgrForTest,
     HwMgrTestDevices,
     HwMgrTestElmoGold420,
     HwMgrTestElmoGold520,

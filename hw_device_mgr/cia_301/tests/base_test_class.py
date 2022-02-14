@@ -210,8 +210,6 @@ class BaseCiA301TestClass(BaseTestClass):
     @classmethod
     def munge_sim_device_data(cls, sim_device_data):
         sim_device_data = super().munge_sim_device_data(sim_device_data)
-        # Hack support for the HWDeviceMgr class
-        device_base_cls = getattr(cls, "device_base_class", cls.device_class)
         for dev in sim_device_data:
             # Get device class from test_category key
             device_cls = cls.test_category_class(dev["test_category"])
