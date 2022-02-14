@@ -32,15 +32,17 @@ class TestDevice(BaseTestClass):
         # Test category registries
         print(f"cls {base} category {base.category}")
         assert base.category in base._category_registry
-        if self.tc_is_category:
+        if base.category == "hw_device_mgr":
+            # hw_device_mgr is its own device...
+            assert "category" not in base.__dict__
+            assert base.category_cls(base.category) is not base
+            assert issubclass(base, base.category_cls(base.category))
+        else:
+            # ...whereas other devices are tested together in a category
             assert "category" in base.__dict__
             assert base.category == base.__dict__["category"]
             assert base.category_cls() is base
             assert base.category_cls(base.category) is base
-        else:
-            assert "category" not in base.__dict__
-            assert base.category_cls(base.category) is not base
-            assert issubclass(base, base.category_cls(base.category))
         category_cls = base.category_cls()
         assert category_cls.category == base.category
         assert issubclass(base, category_cls)

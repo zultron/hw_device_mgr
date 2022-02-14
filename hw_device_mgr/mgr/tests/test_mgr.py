@@ -15,8 +15,6 @@ class TestHWDeviceMgr(BaseMgrTestClass, _TestDevice):
         *_TestDevice.expected_mro[1:],
     ]
 
-    tc_is_category = False
-
     # Test CiA NMT init:  online & operational status
     read_update_write_yaml = "mgr/tests/read_update_write.cases.yaml"
 

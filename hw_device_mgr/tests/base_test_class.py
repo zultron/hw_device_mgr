@@ -23,9 +23,6 @@ class BaseTestClass:
     device_class = BogusDevice
     device_model_classes = BogusV1IO, BogusV2Servo, BogusV1Servo
 
-    # Device class has `category` attribute
-    tc_is_category = True
-
     # Sim mode by default
     sim = True
 
