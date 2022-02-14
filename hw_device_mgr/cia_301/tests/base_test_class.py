@@ -214,8 +214,7 @@ class BaseCiA301TestClass(BaseTestClass):
             # Get device class from test_category key
             device_cls = cls.test_category_class(dev["test_category"])
             # Replace model_id key
-            dev.pop("model_id")
-            dev["vendor_id"], dev["product_code"] = device_cls.device_model_id()
+            dev["vendor_id"], dev["product_code"] = dev.pop("model_id")
             # For test fixture
             dev["test_address"] = (dev["bus"], dev["position"])
         return sim_device_data

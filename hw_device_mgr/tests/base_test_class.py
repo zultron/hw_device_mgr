@@ -55,7 +55,7 @@ class BaseTestClass:
             assert device_cls
             new_sim_device_data.append(dev)
             # Set model_id key
-            dev["model_id"] = device_cls.model_id
+            dev["model_id"] = device_cls.device_model_id()
             # Set name & address (for test logging purposes only)
             dev["test_name"] = device_cls.name
             dev["test_address"] = dev["position"]

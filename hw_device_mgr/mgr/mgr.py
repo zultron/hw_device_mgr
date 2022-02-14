@@ -668,7 +668,7 @@ class SimHWDeviceMgr(HWDeviceMgr, SimDevice):
     name = "sim_hw_device_mgr"
     data_type_class = CiA402SimDevice.data_type_class
     device_base_class = CiA402SimDevice
-    device_classes = CiA402SimDevice.get_model()
+    device_classes = None
 
     @classmethod
     def init_sim(cls, *, sim_device_data):

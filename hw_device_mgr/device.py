@@ -290,7 +290,6 @@ class SimDevice(Device):
 
         for dev in sim_device_data:
             device_cls = cls.sim_device_data_class(dev)
-            assert device_cls is not None
 
             # Set sparse keys
             updates = dict(

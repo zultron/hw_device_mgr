@@ -11,7 +11,14 @@ class BogusDevice(EtherCATSimDevice, CiA402SimDevice):
 
 
 class BogusServo(BogusDevice):
-    """Bogus Device Co servo drive."""
+    """Bogus Device Co V1 servo drive."""
 
-    product_code = 0xB09050F0
-    name = "bogus_servo_drive"
+    product_code = 0xB0905030
+    name = "bogus_v1_servo_drive"
+
+
+class BogusServo(BogusDevice):
+    """Bogus Device Co V2 servo drive."""
+
+    product_code = 0xB0905031
+    name = "bogus_v2_servo_drive"

@@ -2,7 +2,7 @@
 
 from hw_device_mgr.mgr_ros_hal.mgr import (
     ROSHALHWDeviceMgr,
-    SimROSEtherCATHWDeviceMgr,
+    SimROSHALHWDeviceMgr,
 )
 import sys
 
@@ -10,7 +10,7 @@ if __name__ == "__main__":
     argv = list(sys.argv[1:])  # Knock off executable name
     sim = "--sim" in argv
     if sim:
-        mgr = SimROSEtherCATHWDeviceMgr(sim=True)
+        mgr = SimROSHALHWDeviceMgr(sim=True)
     else:
         mgr = ROSHALHWDeviceMgr()
     mgr.init(argv)

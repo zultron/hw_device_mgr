@@ -12,23 +12,19 @@ class ManagedDevices(LCECDevice, CiA402Device, HALPinDevice):
     category = "managed_lcec_devices"
 
 
-class ElmoGold420LCEC(ElmoGold420, ManagedDevices):
-    product_code = 0x20030924
+class ElmoGold420LCEC(ManagedDevices, ElmoGold420):
     name = "elmo_gold_420_lcec"
 
 
-class ElmoGold520LCEC(ElmoGold520, ManagedDevices):
-    product_code = 0x20030925
+class ElmoGold520LCEC(ManagedDevices, ElmoGold520):
     name = "elmo_gold_520_lcec"
 
 
-class InovanceIS620NLCEC(InovanceIS620N, ManagedDevices):
-    product_code = 0x200C0108
+class InovanceIS620NLCEC(ManagedDevices, InovanceIS620N):
     name = "inovance_is620n_lcec"
 
 
-class InovanceSV660LCEC(InovanceSV660, ManagedDevices):
-    product_code = 0x200C010D
+class InovanceSV660LCEC(ManagedDevices, InovanceSV660):
     name = "inovance_sv660n_lcec"
 
 
@@ -36,26 +32,21 @@ class SimManagedLCECDevices(LCECSimDevice, CiA402SimDevice, HALPinDevice):
     category = "sim_lcec_managed_devices"
 
 
-class BogusServoSimLCEC(BogusServo, SimManagedLCECDevices):
-    product_code = 0xB09050F2
+class BogusServoSimLCEC(SimManagedLCECDevices, BogusServo):
     name = "bogus_servo_drive_sim_lcec"
 
 
-class ElmoGold420SimLCEC(ElmoGold420, SimManagedLCECDevices):
-    product_code = 0x30030924
+class ElmoGold420SimLCEC(SimManagedLCECDevices, ElmoGold420):
     name = "elmo_gold_420_sim_lcec"
 
 
-class ElmoGold520SimLCEC(ElmoGold520, SimManagedLCECDevices):
-    product_code = 0x30030925
+class ElmoGold520SimLCEC(SimManagedLCECDevices, ElmoGold520):
     name = "elmo_gold_520_sim_lcec"
 
 
-class InovanceIS620NSimLCEC(InovanceIS620N, SimManagedLCECDevices):
-    product_code = 0x300C0108
+class InovanceIS620NSimLCEC(SimManagedLCECDevices, InovanceIS620N):
     name = "inovance_is620n_sim_lcec"
 
 
-class InovanceSV660SimLCEC(InovanceSV660, SimManagedLCECDevices):
-    product_code = 0x300C010D
+class InovanceSV660SimLCEC(SimManagedLCECDevices, InovanceSV660):
     name = "inovance_sv660n_sim_lcec"

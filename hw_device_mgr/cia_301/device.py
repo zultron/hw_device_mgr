@@ -176,11 +176,12 @@ class CiA301SimDevice(CiA301Device, SimDevice):
 
     @classmethod
     def sim_device_data_class(cls, sim_device_data):
-        model_id = (
-            sim_device_data["vendor_id"],
-            sim_device_data["product_code"],
+        model_id = cls.config_class.format_model_id(
+            (sim_device_data["vendor_id"], sim_device_data["product_code"])
         )
-        return cls.get_model(model_id)
+        model = cls.get_model(model_id)
+        assert model, f"Unknown model ID {model_id}"
+        return model
 
     @classmethod
     def sim_device_data_address(cls, sim_device_data):
