@@ -19,25 +19,21 @@ class Device(abc.ABC):
     feedback_out_data_types = dict()
     command_in_data_types = dict()
     command_out_data_types = dict()
-    sim_feedback_data_types = dict()
 
     feedback_in_defaults = dict()
     feedback_out_defaults = dict(goal_reached=True, goal_reason="Reached")
     command_in_defaults = dict()
     command_out_defaults = dict()
-    sim_feedback_defaults = dict()
 
     interface_names = {
         "feedback_in",
         "feedback_out",
         "command_in",
         "command_out",
-        "sim_feedback",
     }
 
-    def __init__(self, address=None, sim=False):
+    def __init__(self, address=None):
         self.address = address
-        self.sim = sim
         self.init_interfaces()
 
     def init(self, index=None):
@@ -99,9 +95,6 @@ class Device(abc.ABC):
 
     def read(self):
         """Read `feedback_in` from hardware interface."""
-        if self.sim:
-            sfb = self._interfaces["sim_feedback"].get()
-            self._interfaces["feedback_in"].set(**sfb)
 
     def get_feedback(self):
         """Process `feedback_in` and return `feedback_out` interface."""
@@ -115,16 +108,8 @@ class Device(abc.ABC):
         self._interfaces["command_out"].set()  # Set defaults
         return self._interfaces["command_out"]
 
-    def set_sim_feedback(self):
-        """Simulate feedback from command and feedback."""
-        sfb = self._interfaces["sim_feedback"]
-        sfb.set()
-        return sfb
-
     def write(self):
         """Write `command_out` to hardware interface."""
-        if self.sim:
-            self.set_sim_feedback()
 
     def log_status(self):
         pass
@@ -260,7 +245,7 @@ class Device(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def scan_devices(cls, sim=True):
+    def scan_devices(cls):
         """
         Scan attached devices and return a list of objects.
 
@@ -272,6 +257,13 @@ class Device(abc.ABC):
 
 
 class SimDevice(Device):
+
+    sim_feedback_data_types = dict()
+    sim_feedback_defaults = dict()
+
+    interface_names = {
+        "sim_feedback",
+    }
 
     _sim_device_data = dict()
 
@@ -310,3 +302,21 @@ class SimDevice(Device):
             dev = dev_type.get_device(address=data["address"], **kwargs)
             res.append(dev)
         return res
+
+
+    def read(self):
+        """Read `feedback_in` from hardware interface."""
+        super().read()
+        sfb = self._interfaces["sim_feedback"].get()
+        self._interfaces["feedback_in"].set(**sfb)
+
+    def set_sim_feedback(self):
+        """Simulate feedback from command and feedback."""
+        sfb = self._interfaces["sim_feedback"]
+        sfb.set()
+        return sfb
+
+    def write(self):
+        """Write `command_out` to hardware interface."""
+        super().write()
+        self.set_sim_feedback()

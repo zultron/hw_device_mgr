@@ -102,7 +102,7 @@ class TestDevice(BaseTestClass):
             assert name_registered
 
     def test_scan_devices(self, device_cls, all_device_data):
-        devs = device_cls.scan_devices(sim=self.sim)
+        devs = device_cls.scan_devices()
         for obj, data in zip(devs, all_device_data.values()):
             print(f"Dev:  {obj}")
             assert obj.name == data["test_name"]
@@ -117,7 +117,7 @@ class TestDevice(BaseTestClass):
     def obj(self, device_cls, sim_device_data):
         self.sim_device_data = sim_device_data
         self.obj = device_cls(
-            address=sim_device_data["test_address"], sim=self.sim
+            address=sim_device_data["test_address"]
         )
         self.obj.init()
         yield self.obj

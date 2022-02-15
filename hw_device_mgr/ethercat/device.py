@@ -64,9 +64,12 @@ class EtherCATDevice(CiA301Device, abc.ABC):
         for dev in cls.get_model():
             esi_path = dev.xml_description_path()
             if esi_path in dev_esi_paths:
+                assert dev.device_model_id() in sdo_data
                 continue
             dev_esi_paths.add(esi_path)
             dev_sdo_data = dev.config_class.get_device_sdos_from_esi(esi_path)
+            print(f"ESI file: {esi_path}")
+            print(f"   Read SDO data for {' '.join(str(k) for k in dev_sdo_data.keys())}")
             sdo_data.update(dev_sdo_data)
         return sdo_data
 
@@ -75,6 +78,11 @@ class EtherCATDevice(CiA301Device, abc.ABC):
         """Read device SDOs from ESI file and add to configuration."""
         sdo_data = cls.read_device_sdos_from_esi()
         cls.add_device_sdos(sdo_data)
+
+    @classmethod
+    def munge_sdo_data(cls, sdo_data):
+        # SDO data from ESI parser already in correct format
+        return sdo_data
 
 
 class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
@@ -86,11 +94,6 @@ class EtherCATSimDevice(EtherCATDevice, CiA301SimDevice):
 
     def set_params_volatile(self, nv=False):
         self.params_volatile = not nv
-
-    @classmethod
-    def munge_sdo_data(cls, sdo_data):
-        # SDO data from ESI parser already in correct format
-        return sdo_data
 
     @classmethod
     def init_sim(cls, **kwargs):
