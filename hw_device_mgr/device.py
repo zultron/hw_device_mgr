@@ -262,6 +262,10 @@ class SimDevice(Device):
     sim_feedback_defaults = dict()
 
     interface_names = {
+        "feedback_in",
+        "feedback_out",
+        "command_in",
+        "command_out",
         "sim_feedback",
     }
 

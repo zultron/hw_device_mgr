@@ -18,11 +18,7 @@ class CiA301Device(Device):
     config_class = CiA301Config
 
     feedback_in_data_types = dict(online="bit", oper="bit")
-
     feedback_in_defaults = dict(online=False, oper=False)
-
-    sim_feedback_data_types = feedback_in_data_types
-    sim_feedback_defaults = feedback_in_defaults
 
     def __init__(self, address=None, **kwargs):
         if isinstance(address, self.config_class):
@@ -66,15 +62,6 @@ class CiA301Device(Device):
         elif not self.feedback_in.get("oper"):
             fb_out.update(goal_reached=False, goal_reason="Not operational")
         return fb_out
-
-    def set_sim_feedback(self, **kwargs):
-        # Automatically step through to online/oper
-        sfb = super().set_sim_feedback(**kwargs)
-        if self.feedback_in.get("online"):
-            sfb.update(online=True, oper=True)
-        else:
-            sfb.update(online=True, oper=False)
-        return sfb
 
     def log_status(self):
         super().log_status()
@@ -147,6 +134,9 @@ class CiA301SimDevice(CiA301Device, SimDevice):
     category = "sim_cia_301"
     config_class = CiA301SimConfig
 
+    sim_feedback_data_types = CiA301Device.feedback_in_data_types
+    sim_feedback_defaults = CiA301Device.feedback_in_defaults
+
     @classmethod
     def set_device_config(cls, config):
         # Configs contain "category"; match those with device classes
@@ -195,3 +185,12 @@ class CiA301SimDevice(CiA301Device, SimDevice):
         sim_device_data = cls._sim_device_data[cls.category]
         cls.add_device_sdos(sdo_data)
         cls.config_class.init_sim(sim_device_data=sim_device_data)
+
+    def set_sim_feedback(self, **kwargs):
+        # Automatically step through to online/oper
+        sfb = super().set_sim_feedback(**kwargs)
+        if self.feedback_in.get("online"):
+            sfb.update(online=True, oper=True)
+        else:
+            sfb.update(online=True, oper=False)
+        return sfb
