@@ -18,9 +18,6 @@ class CiA402Device(CiA301Device):
     - `control_mode`:  Drive control mode, e.g. `MODE_CSP`
     - `control_word_flags`:  Control word bits to set
     - `state_flags`:  Status word bits to match for `goal_reached` feedback
-
-    The `set_sim_feedback()` method will crudely mimic behavior of a
-    real drive.
     """
 
     category = "cia_402"
@@ -92,14 +89,12 @@ class CiA402Device(CiA301Device):
         status_word="uint16",
         control_mode_fb="int8",
     )
-    sim_feedback_data_types = feedback_in_data_types
 
     # Incoming feedback from drives:  param_name : inital_value
     feedback_in_defaults = dict(
         status_word=0,
         control_mode_fb=0,
     )
-    sim_feedback_defaults = feedback_in_defaults
 
     # Outgoing feedback to controller:  param_name : inital_value
     feedback_out_defaults = dict(
@@ -433,6 +428,18 @@ class CiA402Device(CiA301Device):
         cm = self.command_in.get("control_mode")
         return self.control_mode_int(cm)
 
+
+class CiA402SimDevice(CiA402Device, CiA301SimDevice):
+    """
+    Manage a simulated CiA 402 motor drive's state machine.
+
+    The `set_sim_feedback()` method will crudely mimic behavior of a
+    real drive.
+    """
+
+    sim_feedback_data_types = CiA402Device.feedback_in_data_types
+    sim_feedback_defaults = CiA402Device.feedback_in_defaults
+
     # ------- Sim feedback -------
 
     def set_sim_feedback(self):
@@ -480,7 +487,7 @@ class CiA402Device(CiA301Device):
             control_mode_fb=control_mode,
         )
 
-        if self.sim and self.feedback_in.get("oper"):
+        if self.feedback_in.get("oper"):
             # Log changes
             if self.sim_feedback.changed("control_mode_fb"):
                 cm = self.sim_feedback.get("control_mode_fb")
@@ -551,9 +558,3 @@ class CiA402Device(CiA301Device):
         for name, bitnum in cls.cw_extra_bits.items():
             flags[name] = bool(control_word & 1 << bitnum)
         return flags
-
-
-class CiA402SimDevice(CiA402Device, CiA301SimDevice):
-    """Manage a simulated CiA 402 motor drive's state machine."""
-
-    pass
