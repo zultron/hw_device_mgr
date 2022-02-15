@@ -1,4 +1,4 @@
-from ..device import Device
+from ..device import Device, SimDevice
 from .base import HALMixin
 from .data_types import HALDataType
 
@@ -13,7 +13,6 @@ class HALPinDevice(Device, HALMixin):
     pin_interfaces = dict(
         feedback_in=(HALMixin.HAL_IN, ""),
         command_out=(HALMixin.HAL_OUT, ""),
-        sim_feedback=(HALMixin.HAL_OUT, "sim_"),
     )
 
     # Prepend this to HAL pin names
@@ -98,6 +97,15 @@ class HALPinDevice(Device, HALMixin):
             for name, val in self.interface(pin_iface).get().items():
                 pname = self.pin_name(pin_iface, name)
                 self.pins[pname].set(val)
+
+
+class SimHALPinDevice(HALPinDevice, SimDevice):
+
+    # For these interfaces, create HAL pins with (direction, prefix)
+    pin_interfaces = dict(
+        sim_feedback=(HALMixin.HAL_OUT, "sim_"),
+        **HALPinDevice.pin_interfaces,
+    )
 
 
 class HALCompDevice(Device, HALMixin):

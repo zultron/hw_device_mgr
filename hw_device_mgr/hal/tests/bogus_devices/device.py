@@ -1,4 +1,4 @@
-from ...device import HALPinDevice
+from ...device import SimHALPinDevice
 from ....cia_402.tests.bogus_devices.device import (
     BogusCiA402Device,
     BogusCiA402V1Servo,
@@ -7,7 +7,7 @@ from ....cia_402.tests.bogus_devices.device import (
 )
 
 
-class BogusHALDevice(HALPinDevice, BogusCiA402Device):
+class BogusHALDevice(SimHALPinDevice, BogusCiA402Device):
     category = "bogus_hal_device"
     vendor_id = 0xB090C0
 

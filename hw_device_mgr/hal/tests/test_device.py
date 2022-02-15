@@ -9,6 +9,7 @@ class TestHALDevice(BaseHALTestClass, _TestCiA402Device):
 
     expected_mro = [
         "BogusHALDevice",
+        "SimHALPinDevice",
         "HALPinDevice",
         # Add HALMixin near bottom of MRO
         *_TestCiA402Device.expected_mro[:-1],
@@ -19,7 +20,7 @@ class TestHALDevice(BaseHALTestClass, _TestCiA402Device):
     @pytest.fixture
     def obj(self, sim_device_data, mock_halcomp):
         self.obj = self.device_model_cls(
-            address=sim_device_data["test_address"], sim=self.sim
+            address=sim_device_data["test_address"]
         )
         self.obj.init(comp=mock_halcomp)
         yield self.obj
