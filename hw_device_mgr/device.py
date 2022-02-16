@@ -255,6 +255,57 @@ class Device(abc.ABC):
         `get_device_obj(address)` to obtain the device instance.
         """
 
+    @classmethod
+    def dot_link(cls, dev_cls, classes, links):
+        classes.add(dev_cls)
+        for base in dev_cls.__bases__:
+            if not issubclass(base, cls):
+                continue  # Ignore non-Device subclasses
+            classes.add(base)
+            links.add((base, dev_cls))
+            cls.dot_link(base, classes, links)
+
+    @classmethod
+    def dot(cls):
+        classes = set()
+        links = set()
+        for dev_cls in Device.get_model():
+            cls.dot_link(dev_cls, classes, links)
+        rank_same_node = "; ".join(c.dot_str() for c in classes if "category" in c.__dict__ and c.category != "all")
+        rank_same_leaf = "; ".join(c.dot_str() for c in classes if c.name)
+        gv = "strict digraph Devices {\n"
+        gv += "  rankdir=LR\n"
+        gv += "  subgraph {\n"
+        for dev_cls in classes:
+            gv += f'    {dev_cls.dot_str()}'
+            gv += f'      [style=filled, fillcolor={dev_cls.dot_color()}];\n'
+        for parent, child in links:
+            gv += f'    {parent.dot_str()} -> {child.dot_str()};\n'
+        gv += f"  {{rank = same; {rank_same_leaf};}}\n"
+        gv += f"  {{rank = same; {rank_same_node};}}\n"
+        gv += "  }\n"
+        gv += "}\n"
+        return gv
+
+    @classmethod
+    def dot_str(cls):
+        if cls.name:
+            type_name = f"{cls.name}\\n"
+        elif "category" in cls.__dict__:
+            type_name = f"{cls.category}\\n"
+        else:
+            type_name = ""
+        cls_name = cls.__name__
+        return f'"{type_name}{cls.__name__}"'
+
+    @classmethod
+    def dot_color(cls):
+        if cls.name:
+            return "green"
+        elif "category" in cls.__dict__:
+            return "white"
+        else:
+            return "lightblue"
 
 class SimDevice(Device):
 

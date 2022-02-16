@@ -1,5 +1,8 @@
 import pytest
 from .base_test_class import BaseTestClass
+from ..device import Device
+import subprocess
+import os
 from pprint import pformat
 import ruamel.yaml
 
@@ -350,3 +353,22 @@ class TestDevice(BaseTestClass):
 
         for test_case in test_cases:
             self.read_update_write_loop(test_case)
+
+class TestDot:
+
+    def pytest_path(*args):
+        # This is certain to break.
+        user = os.environ.get("USER")
+        path = args[-1]
+        return f"/tmp/pytest-of-{user}/pytest-current/{path}.png"
+
+    @pytest.fixture(params=["device.dot"], ids=pytest_path)
+    def png_fname(self, request):
+        png_fname = self.pytest_path(request.param)
+        yield request.param
+
+    def test_gen_dot(self, png_fname, tmp_path):
+        gv_file = tmp_path / ".." / f"{png_fname}.gv"
+        with gv_file.open('w') as f:
+            f.write(Device.dot())
+        subprocess.check_call(["dot", "-Tpng", "-O", gv_file])
