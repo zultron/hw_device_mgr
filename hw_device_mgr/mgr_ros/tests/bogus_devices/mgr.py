@@ -8,7 +8,8 @@ from ....mgr.tests.bogus_devices.mgr import (
 )
 
 
-class ROSHWDeviceMgrForTest(SimROSHWDeviceMgr):
+class ROSHWDeviceMgrTestCategory(SimROSHWDeviceMgr):
+    category = "test_ros_hw_device_mgr"
     device_base_class = HwMgrTestDevices
     device_classes = (
         HwMgrTestElmoGold420,
@@ -17,4 +18,5 @@ class ROSHWDeviceMgrForTest(SimROSHWDeviceMgr):
         HwMgrTestInovanceSV660N,
     )
 
-    name = "ros_hw_device_mgr_for_test"
+class ROSHWDeviceMgrTest(ROSHWDeviceMgrTestCategory):
+    name = "test_ros_hw_device_mgr"

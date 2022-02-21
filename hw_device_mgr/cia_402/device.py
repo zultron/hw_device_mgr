@@ -20,7 +20,6 @@ class CiA402Device(CiA301Device):
     - `state_flags`:  Status word bits to match for `goal_reached` feedback
     """
 
-    category = "cia_402"
     data_types = CiA301DataType
 
     # ------- FEEDBACK -------

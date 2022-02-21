@@ -6,7 +6,6 @@ from .data_types import HALDataType
 class HALPinDevice(Device, HALMixin):
     """A `Device` with HAL pins attached to feedback, goal and command."""
 
-    category = "HAL"
     data_type_class = HALDataType
 
     # For these interfaces, create HAL pins with (direction, prefix)
@@ -98,6 +97,16 @@ class HALPinDevice(Device, HALMixin):
                 pname = self.pin_name(pin_iface, name)
                 self.pins[pname].set(val)
 
+class SimHALPinDevice(HALPinDevice):
+    """A `HalPinDevice` with HAL pins attached to sim feedback."""
+
+    # For these interfaces, create HAL pins with (direction, prefix)
+    pin_interfaces = dict(
+        feedback_in=(HALMixin.HAL_IN, ""),
+        command_out=(HALMixin.HAL_OUT, ""),
+        sim_feedback=(HALMixin.HAL_OUT, "sim_"),
+    )
+
 
 class SimHALPinDevice(HALPinDevice, SimDevice):
 
@@ -108,7 +117,7 @@ class SimHALPinDevice(HALPinDevice, SimDevice):
     )
 
 
-class HALCompDevice(Device, HALMixin):
+class HALCompDevice(HALPinDevice):
     """A `Device` with HAL component."""
 
     hal_comp_name = None

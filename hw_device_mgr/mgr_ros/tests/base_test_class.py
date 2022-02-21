@@ -1,5 +1,5 @@
 from ...mgr.tests.base_test_class import BaseMgrTestClass
-from .bogus_devices.mgr import ROSHWDeviceMgrForTest
+from .bogus_devices.mgr import ROSHWDeviceMgrTest
 import yaml
 import pytest
 
@@ -14,16 +14,16 @@ class BaseROSMgrTestClass(BaseMgrTestClass):
     rclpy_patches = ("hw_device_mgr.mgr_ros.mgr.rclpy", "bogus")
 
     # Manager class
-    device_class = ROSHWDeviceMgrForTest
+    device_class = ROSHWDeviceMgrTest
 
     # Data types
-    data_type_class = ROSHWDeviceMgrForTest.data_type_class
+    data_type_class = ROSHWDeviceMgrTest.data_type_class
 
     # Base class for attached devices
-    device_base_class = ROSHWDeviceMgrForTest.device_base_class
+    device_base_class = ROSHWDeviceMgrTest.device_base_class
 
     # Attached device classes
-    device_model_classes = ROSHWDeviceMgrForTest.device_classes
+    device_model_classes = ROSHWDeviceMgrTest.device_classes
 
     @pytest.fixture
     def extra_fixtures(

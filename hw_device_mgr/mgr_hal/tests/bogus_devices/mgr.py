@@ -33,7 +33,8 @@ class HALHWMgrTestInovanceSV660N(HALHWMgrTestDevices, InovanceSV660):
     test_category = "inovance_is620n_test"
 
 
-class HALHWDeviceMgrForTest(SimHALHWDeviceMgr):
+class HALHWDeviceMgrTestCategory(SimHALHWDeviceMgr):
+    category = "test_hal_hw_device_mgr"
     data_type_class = HALHWMgrTestDevices.data_type_class
     device_base_class = HALHWMgrTestDevices
     device_classes = (
@@ -43,4 +44,5 @@ class HALHWDeviceMgrForTest(SimHALHWDeviceMgr):
         HALHWMgrTestInovanceSV660N,
     )
 
-    name = "hal_hw_device_mgr_for_test"
+class HALHWDeviceMgrTest(HALHWDeviceMgrTestCategory):
+    name = "test_sim_hal_hw_device_mgr"

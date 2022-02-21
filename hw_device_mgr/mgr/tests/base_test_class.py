@@ -1,7 +1,7 @@
 import pytest
 from ...devices.tests.base_test_class import BaseDevicesTestClass
 from .bogus_devices.mgr import (
-    HWDeviceMgrForTest,
+    HWDeviceMgrTest,
     HwMgrTestDevices,
     HwMgrTestElmoGold420,
     HwMgrTestElmoGold520,
@@ -30,7 +30,7 @@ class BaseMgrTestClass(BaseDevicesTestClass):
     device_sdos_yaml = "devices/tests/sim_sdo_data.yaml"
 
     # Manager class
-    device_class = HWDeviceMgrForTest
+    device_class = HWDeviceMgrTest
 
     # Base class for attached devices
     device_base_class = HwMgrTestDevices

@@ -10,7 +10,6 @@ class CiA301Device(Device):
     Implements NMT state machine.
     """
 
-    category = "cia_301"
     vendor_id = None
     product_code = None
 
@@ -131,7 +130,6 @@ class CiA301Device(Device):
 class CiA301SimDevice(CiA301Device, SimDevice):
     """Simulated CAN device."""
 
-    category = "sim_cia_301"
     config_class = CiA301SimConfig
 
     sim_feedback_data_types = CiA301Device.feedback_in_data_types

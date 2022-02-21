@@ -1,5 +1,4 @@
 from ..device import Device, SimDevice
-from ..cia_301.data_types import CiA301DataType
 from ..logging import Logging
 from ..cia_402.device import CiA402Device, CiA402SimDevice
 
@@ -13,16 +12,10 @@ class HWDeviceTimeout(RuntimeError):
     pass
 
 
-class HWDeviceMgrCategory(Device):
-    category = "hw_device_mgr"
-
-
-class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
-    data_type_class = CiA301DataType
+class HWDeviceMgr(FysomGlobalMixin, Device):
+    data_type_class = CiA402Device.data_type_class
     device_base_class = CiA402Device
-    device_classes = (CiA402Device,)
-
-    name = "hw_device_mgr"
+    device_classes = None
 
     @classmethod
     def device_model_id(cls):
@@ -56,8 +49,6 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
     command_out_data_types = dict(state_cmd="uint8", reset="bit")
 
     update_rate = 10  # Hz
-
-    logger = Logging.getLogger(name)
 
     ####################################################
     # Initialization
@@ -653,10 +644,7 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
 
 class SimHWDeviceMgr(HWDeviceMgr, SimDevice):
 
-    name = "sim_hw_device_mgr"
-    data_type_class = CiA402SimDevice.data_type_class
     device_base_class = CiA402SimDevice
-    device_classes = None
 
     @classmethod
     def init_sim(cls, *, sim_device_data):

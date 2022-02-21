@@ -7,8 +7,6 @@ import traceback
 
 class ROSHWDeviceMgr(HWDeviceMgr):
 
-    name = "ros_hw_device_mgr"
-
     def get_param(self, name, default=None):
         if self.ros_node.has_parameter(name):
             param = self.ros_node.get_parameter(name)
@@ -98,7 +96,6 @@ class ROSHWDeviceMgr(HWDeviceMgr):
 
 
 class SimROSHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
-    name = "sim_ros_hw_device_mgr"
 
     def init_sim_from_rosparams(self, **kwargs):
         sim_device_data_path = self.get_param("sim_device_data_path")

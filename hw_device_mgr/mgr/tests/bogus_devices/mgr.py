@@ -33,7 +33,8 @@ class HwMgrTestInovanceSV660N(HwMgrTestDevices, InovanceSV660):
     test_category = "inovance_sv660n_test"
 
 
-class HWDeviceMgrForTest(SimHWDeviceMgr):
+class HWDeviceMgrTestCategory(SimHWDeviceMgr):
+    category = "test_hw_device_mgr"
     device_base_class = HwMgrTestDevices
     device_classes = (
         HwMgrTestElmoGold420,
@@ -42,4 +43,5 @@ class HWDeviceMgrForTest(SimHWDeviceMgr):
         HwMgrTestInovanceSV660N,
     )
 
-    name = "hw_device_mgr_for_test"
+class HWDeviceMgrTest(HWDeviceMgrTestCategory):
+    name = "test_sim_hw_device_mgr"

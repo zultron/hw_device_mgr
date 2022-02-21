@@ -1,16 +1,16 @@
 from ...mgr_hal.tests.base_test_class import BaseHALMgrTestClass
 from ...mgr_ros.tests.base_test_class import BaseROSMgrTestClass
-from .bogus_devices.mgr import ROSHWDeviceMgrForTest
+from .bogus_devices.mgr import ROSHWDeviceMgrTest
 import pytest
 
 
 class BaseROSHALMgrTestClass(BaseROSMgrTestClass, BaseHALMgrTestClass):
     """Base test class for `ROSHALHWDeviceMgr` class."""
 
-    data_type_class = ROSHWDeviceMgrForTest.data_type_class
-    device_class = ROSHWDeviceMgrForTest
-    device_base_class = ROSHWDeviceMgrForTest.device_base_class
-    device_model_classes = ROSHWDeviceMgrForTest.device_classes
+    data_type_class = ROSHWDeviceMgrTest.data_type_class
+    device_class = ROSHWDeviceMgrTest
+    device_base_class = ROSHWDeviceMgrTest.device_base_class
+    device_model_classes = ROSHWDeviceMgrTest.device_classes
 
     @pytest.fixture
     def extra_fixtures(

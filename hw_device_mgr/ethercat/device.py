@@ -15,8 +15,6 @@ class EtherCATDevice(CiA301Device, abc.ABC):
     model.
     """
 
-    category = "EtherCAT"
-
     # Resource names for locating device description XML and error files
     device_xml_dir = "device_xml"
 

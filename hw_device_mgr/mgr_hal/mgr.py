@@ -1,14 +1,13 @@
 from ..mgr.mgr import HWDeviceMgr, SimHWDeviceMgr
-from ..hal.device import HALCompDevice, HALPinDevice, SimHALPinDevice, HALDataType
+from ..hal.device import HALCompDevice, HALPinDevice, SimHALPinDevice
 
 
 class HALHWDeviceMgr(HWDeviceMgr, HALCompDevice, HALPinDevice):
+    """Hardware device manager with HAL pins."""
 
-    name = "hal_hw_device_mgr"
     hal_comp_name = "hw_device_mgr"
-    data_type_class = HALDataType
+    data_type_class = HALPinDevice.data_type_class
     device_base_class = HALPinDevice
-    device_classes = (HALPinDevice,)
 
     def init_devices(self, **kwargs):
         super().init_devices(**kwargs)
@@ -19,6 +18,5 @@ class HALHWDeviceMgr(HWDeviceMgr, HALCompDevice, HALPinDevice):
 
 
 class SimHALHWDeviceMgr(HALHWDeviceMgr, SimHWDeviceMgr, SimHALPinDevice):
-    name = "sim_hal_hw_device_mgr"
+    """Hardware device manager with HAL pins."""
     device_base_class = SimHALPinDevice
-    device_classes = (SimHALPinDevice,)
