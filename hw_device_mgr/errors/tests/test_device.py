@@ -6,8 +6,9 @@ from .base_test_class import ErrorBaseTestClass
 class TestErrorDevice(ErrorBaseTestClass, _TestDevice):
     expected_mro = [
         "BogusErrorDevice",
+        "SimErrorDevice",
         "ErrorDevice",
-        *_TestDevice.expected_mro,
+        *_TestDevice.expected_mro[1:],
     ]
 
     @pytest.fixture

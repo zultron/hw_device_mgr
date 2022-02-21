@@ -5,5 +5,5 @@ from ...lcec.tests.test_device import TestLCECDevice as _TestLCECDevice
 class TestDevices(BaseDevicesTestClass, _TestLCECDevice):
     expected_mro = [
         "DevicesForTest",
-        *[n for n in _TestLCECDevice.expected_mro if not n.startswith("Bogus")],
+        *[c for c in _TestLCECDevice.expected_mro[1:] if c != "RelocatableESIDevice"],
     ]

@@ -14,9 +14,9 @@ class TestLCECDevice(BaseLCECTestClass, _TestEtherCATDevice, _TestHALDevice):
         "BogusLCECDevice",
         "LCECSimDevice",
         "LCECDevice",
-        *_TestEtherCATDevice.expected_mro[:-5],  # BogusEtherCAT...CiA301
-        *_TestHALDevice.expected_mro[1:3],  # HALPinDevice
-        *_TestHALDevice.expected_mro[7:],  # BogusDevice...
+        *_TestHALDevice.expected_mro[1:3],  # SimHALPinDevice...HALPinDevice
+        *_TestEtherCATDevice.expected_mro[1:-1],  # RelocatableESIDevice...ABC
+        *_TestHALDevice.expected_mro[-2:],  # HALMixin...object
     ]
 
     @pytest.fixture

@@ -1,4 +1,4 @@
-from ..device import Device
+from ..device import Device, SimDevice
 from ..data_types import DataType
 import ruamel.yaml
 
@@ -65,3 +65,6 @@ class ErrorDevice(Device):
             return
 
         self.feedback.update(error_code=error_code, **error_info)
+
+class SimErrorDevice(ErrorDevice, SimDevice):
+    """Abstract class representing a device simulated error code handling."""

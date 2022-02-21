@@ -12,7 +12,7 @@ class TestHALDevice(BaseHALTestClass, _TestCiA402Device):
         "SimHALPinDevice",
         "HALPinDevice",
         # Add HALMixin near bottom of MRO
-        *_TestCiA402Device.expected_mro[:-1],
+        *_TestCiA402Device.expected_mro[1:-1],
         "HALMixin",
         "object",
     ]

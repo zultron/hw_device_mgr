@@ -9,14 +9,17 @@ class BogusHALDevice(SimHALPinDevice, CiA301SimDevice):
 
 class BogusHALV1Servo(BogusHALDevice):
     name = "bogo_hal_v1_servo"
+    test_category = "bogus_v1_servo"
     product_code = 0xB0905050
 
 
 class BogusHALV2Servo(BogusHALDevice):
     name = "bogo_hal_v2_servo"
+    test_category = "bogus_v2_servo"
     product_code = 0xB0905051
 
 
 class BogusHALV1IO(BogusHALDevice):
     name = "bogo_hal_v1_io"
+    test_category = "bogus_v1_io"
     product_code = 0xB0901050

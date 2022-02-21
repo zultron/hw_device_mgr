@@ -8,7 +8,7 @@ class TestCiA301Device(BaseCiA301TestClass, _TestDevice):
         "BogusCiA301Device",
         "CiA301SimDevice",
         "CiA301Device",
-        *_TestDevice.expected_mro,
+        *_TestDevice.expected_mro[1:],
     ]
 
     # Test CiA NMT init:  online & operational status
