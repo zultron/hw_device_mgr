@@ -11,12 +11,11 @@ from .base_test_class import BaseLCECTestClass
 class TestLCECDevice(BaseLCECTestClass, _TestEtherCATDevice, _TestHALDevice):
 
     expected_mro = [
-        "BogusLCECDevice",
         "LCECSimDevice",
         "LCECDevice",
-        *_TestHALDevice.expected_mro[1:3],  # SimHALPinDevice...HALPinDevice
-        *_TestEtherCATDevice.expected_mro[1:-1],  # RelocatableESIDevice...ABC
-        *_TestHALDevice.expected_mro[-2:],  # HALMixin...object
+        *_TestHALDevice.expected_mro[:2],  # HALPinSimDevice...HALPinDevice
+        *_TestEtherCATDevice.expected_mro,  # RelocatableESIDevice...ABC
+        _TestHALDevice.expected_mro[-1],  # HALMixin
     ]
 
     @pytest.fixture

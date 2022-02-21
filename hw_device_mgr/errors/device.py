@@ -66,5 +66,5 @@ class ErrorDevice(Device):
 
         self.feedback.update(error_code=error_code, **error_info)
 
-class SimErrorDevice(ErrorDevice, SimDevice):
+class ErrorSimDevice(ErrorDevice, SimDevice):
     """Abstract class representing a device simulated error code handling."""

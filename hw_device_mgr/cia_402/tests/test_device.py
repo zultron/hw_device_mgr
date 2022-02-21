@@ -2,12 +2,11 @@ from .base_test_class import BaseCiA402TestClass
 from ...cia_301.tests.test_device import TestCiA301Device as _TestCiA301Device
 
 
-class TestCiA402Device(BaseCiA402TestClass, _TestCiA301Device):
+class TestCiA402Device(_TestCiA301Device, BaseCiA402TestClass):
 
-    expected_mro = [
-        "BogusCiA402Device",
-        *_TestCiA301Device.expected_mro[1:],
-    ]
+    # expected_mro is the same as CiA301Device, because this test class also
+    # tests non-CiA402Device classes to ensure a realistic mix won't break, and
+    # to simplify tests & test cases
 
     def read_update_write_conv_test_data(self):
         if not self.is_402_device:

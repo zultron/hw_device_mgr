@@ -1,8 +1,8 @@
-from ...device import SimHALPinDevice
+from ...device import HALPinSimDevice
 from ....cia_301.device import CiA301SimDevice
 
 
-class BogusHALDevice(SimHALPinDevice, CiA301SimDevice):
+class BogusHALDevice(HALPinSimDevice, CiA301SimDevice):
     category = "bogus_hal_device"
     vendor_id = 0xB090C0
 

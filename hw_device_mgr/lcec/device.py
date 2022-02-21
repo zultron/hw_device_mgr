@@ -1,5 +1,5 @@
 from ..ethercat.device import EtherCATDevice, EtherCATSimDevice
-from ..hal.device import HALPinDevice, SimHALPinDevice
+from ..hal.device import HALPinDevice, HALPinSimDevice
 from .data_types import LCECDataType
 from .config import LCECConfig, LCECSimConfig
 
@@ -9,5 +9,5 @@ class LCECDevice(HALPinDevice, EtherCATDevice):
     config_class = LCECConfig
 
 
-class LCECSimDevice(LCECDevice, SimHALPinDevice, EtherCATSimDevice):
+class LCECSimDevice(LCECDevice, HALPinSimDevice, EtherCATSimDevice):
     config_class = LCECSimConfig

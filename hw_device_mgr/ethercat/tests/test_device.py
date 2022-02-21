@@ -5,11 +5,10 @@ from .base_test_class import BaseEtherCATTestClass
 class TestEtherCATDevice(BaseEtherCATTestClass, _TestCiA402Device):
 
     expected_mro = [
-        "BogusEtherCATDevice",
         "RelocatableESIDevice",
         "EtherCATSimDevice",
         "EtherCATDevice",
-        *_TestCiA402Device.expected_mro[1:],
+        *_TestCiA402Device.expected_mro,
     ]
 
     def test_xml_description_path(self):

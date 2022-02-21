@@ -10,11 +10,9 @@ import ruamel.yaml
 class TestDevice(BaseTestClass):
     # Expected class MRO
     expected_mro = [
-        "BogusDevice",
         "SimDevice",
         "Device",
         "ABC",
-        "object",
     ]
 
     #
@@ -22,7 +20,7 @@ class TestDevice(BaseTestClass):
     #
 
     def test_mro(self, device_cls):
-        mro = [cls.__name__ for cls in device_cls.__mro__]
+        mro = [cls.__name__ for cls in device_cls.__mro__[1:-1]]
         print("actual MRO:  ", mro)
         print("expected MRO:", self.expected_mro)
         assert mro == self.expected_mro

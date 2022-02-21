@@ -97,7 +97,7 @@ class HALPinDevice(Device, HALMixin):
                 pname = self.pin_name(pin_iface, name)
                 self.pins[pname].set(val)
 
-class SimHALPinDevice(HALPinDevice):
+class HALPinSimDevice(HALPinDevice):
     """A `HalPinDevice` with HAL pins attached to sim feedback."""
 
     # For these interfaces, create HAL pins with (direction, prefix)
@@ -108,7 +108,7 @@ class SimHALPinDevice(HALPinDevice):
     )
 
 
-class SimHALPinDevice(HALPinDevice, SimDevice):
+class HALPinSimDevice(HALPinDevice, SimDevice):
 
     # For these interfaces, create HAL pins with (direction, prefix)
     pin_interfaces = dict(

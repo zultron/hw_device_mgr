@@ -1,7 +1,7 @@
-from ...device import SimErrorDevice
+from ...device import ErrorSimDevice
 
 
-class BogusErrorDevice(SimErrorDevice):
+class BogusErrorDevice(ErrorSimDevice):
     category = "bogus_error_devices"
 
     @classmethod
