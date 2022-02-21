@@ -256,20 +256,10 @@ class Device(abc.ABC):
         """
 
     @classmethod
-    def dot_link(cls, dev_cls, classes, links):
-        classes.add(dev_cls)
-        for base in dev_cls.__bases__:
-            if not issubclass(base, cls):
-                continue  # Ignore non-Device subclasses
-            classes.add(base)
-            links.add((base, dev_cls))
-            cls.dot_link(base, classes, links)
-
-    @classmethod
     def dot(cls):
         classes = set()
         links = set()
-        for dev_cls in Device.get_model():
+        for dev_cls in cls.get_model():
             cls.dot_link(dev_cls, classes, links)
         rank_same_node = "; ".join(c.dot_str() for c in classes if "category" in c.__dict__ and c.category != "all")
         rank_same_leaf = "; ".join(c.dot_str() for c in classes if c.name)
@@ -286,6 +276,16 @@ class Device(abc.ABC):
         gv += "  }\n"
         gv += "}\n"
         return gv
+
+    @classmethod
+    def dot_link(cls, dev_cls, classes, links):
+        classes.add(dev_cls)
+        for base in dev_cls.__bases__:
+            if not issubclass(base, Device):
+                continue  # Ignore non-Device subclasses
+            classes.add(base)
+            links.add((base, dev_cls))
+            cls.dot_link(base, classes, links)
 
     @classmethod
     def dot_str(cls):
