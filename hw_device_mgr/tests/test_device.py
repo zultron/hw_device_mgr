@@ -29,9 +29,10 @@ class TestDevice(BaseTestClass):
         # Check category_cls(), and if base class is a category,
         # it is in registry
         base = device_cls
-        print(f"category registry:  {base._category_registry}")
         # Test category registries
-        print(f"cls {base} category {base.category}")
+        print(f"base cls {base}")
+        print(f"category {base.category}")
+        print(f"category registry:  {base._category_registry}")
         assert base.category in base._category_registry
         if base.category == "hw_device_mgr":
             # hw_device_mgr is its own device...

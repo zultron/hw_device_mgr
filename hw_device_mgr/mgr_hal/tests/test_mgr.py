@@ -5,14 +5,14 @@ from ...hal.tests.test_device import TestHALDevice as _TestHALDevice
 
 class TestHALHWDeviceMgr(BaseHALMgrTestClass, _TestHWDeviceMgr, _TestHALDevice):
     expected_mro = [
-        "HALHWDeviceMgrForTest",
-        "SimHALHWDeviceMgr",
+        "HALHWDeviceMgrTestCategory",
+        "HALSimHWDeviceMgr",
         "HALHWDeviceMgr",
-        *_TestHWDeviceMgr.expected_mro[1:5],  # SimHWDeviceMgr...HWDeviceMgrCategory
+        *_TestHWDeviceMgr.expected_mro[1:4],  # SimHWDeviceMgr...FysomGlobalMixin
         "HALCompDevice",  # HAL comp (this should be tested, too!)
-        *_TestHALDevice.expected_mro[1:3],  # SimHALPin...HALPin
-        *_TestHWDeviceMgr.expected_mro[5:-1],  # SimDevice...ABC
-        *_TestHALDevice.expected_mro[-2:],  # HalMixin...
+        *_TestHALDevice.expected_mro[:2],  # HALPinSim...HALPin
+        *_TestHWDeviceMgr.expected_mro[4:],  # SimDevice...ABC
+        _TestHALDevice.expected_mro[-1],  # HalMixin
     ]
 
     def override_interface_param(self, interface, key, val):

@@ -95,7 +95,7 @@ class ROSHWDeviceMgr(HWDeviceMgr):
         rclpy.shutdown()
 
 
-class SimROSHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
+class ROSSimHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
 
     def init_sim_from_rosparams(self, **kwargs):
         sim_device_data_path = self.get_param("sim_device_data_path")

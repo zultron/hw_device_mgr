@@ -1,4 +1,4 @@
-from ...mgr import SimHALHWDeviceMgr
+from ...mgr import HALSimHWDeviceMgr
 from ....lcec.device import LCECSimDevice
 from ....cia_402.device import CiA402SimDevice
 from ....devices.tests.devices import (
@@ -33,7 +33,7 @@ class HALHWMgrTestInovanceSV660N(HALHWMgrTestDevices, InovanceSV660):
     test_category = "inovance_is620n_test"
 
 
-class HALHWDeviceMgrTestCategory(SimHALHWDeviceMgr):
+class HALHWDeviceMgrTestCategory(HALSimHWDeviceMgr):
     category = "test_hal_hw_device_mgr"
     data_type_class = HALHWMgrTestDevices.data_type_class
     device_base_class = HALHWMgrTestDevices

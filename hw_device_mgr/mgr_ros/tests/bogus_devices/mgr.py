@@ -1,4 +1,4 @@
-from ...mgr import SimROSHWDeviceMgr
+from ...mgr import ROSSimHWDeviceMgr
 from ....mgr.tests.bogus_devices.mgr import (
     HwMgrTestDevices,
     HwMgrTestElmoGold420,
@@ -8,7 +8,7 @@ from ....mgr.tests.bogus_devices.mgr import (
 )
 
 
-class ROSHWDeviceMgrTestCategory(SimROSHWDeviceMgr):
+class ROSHWDeviceMgrTestCategory(ROSSimHWDeviceMgr):
     category = "test_ros_hw_device_mgr"
     device_base_class = HwMgrTestDevices
     device_classes = (

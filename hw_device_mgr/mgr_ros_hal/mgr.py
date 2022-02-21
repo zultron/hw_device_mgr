@@ -1,6 +1,6 @@
-from ..mgr_hal.mgr import HALHWDeviceMgr, SimHALHWDeviceMgr
-from ..mgr_ros.mgr import ROSHWDeviceMgr, SimROSHWDeviceMgr
-from .devices import ManagedDevices, SimManagedEtherCATDevices
+from ..mgr_ros.mgr import ROSHWDeviceMgr, ROSSimHWDeviceMgr
+from ..mgr_hal.mgr import HALHWDeviceMgr, HALSimHWDeviceMgr
+from .devices import ManagedDevices, ManagedEtherCATSimDevices
 
 
 class ROSHALHWDeviceMgr(ROSHWDeviceMgr, HALHWDeviceMgr):
@@ -9,9 +9,9 @@ class ROSHALHWDeviceMgr(ROSHWDeviceMgr, HALHWDeviceMgr):
     device_classes = ManagedDevices.get_model()
 
 
-class SimROSHALHWDeviceMgr(
-    SimROSHWDeviceMgr, SimHALHWDeviceMgr
+class ROSHALSimHWDeviceMgr(
+    ROSHALHWDeviceMgr, ROSSimHWDeviceMgr, HALSimHWDeviceMgr
 ):
 
-    device_base_class = SimManagedEtherCATDevices
-    device_classes = SimManagedEtherCATDevices.get_model()
+    device_base_class = ManagedEtherCATSimDevices
+    device_classes = ManagedEtherCATSimDevices.get_model()

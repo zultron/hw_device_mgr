@@ -27,6 +27,7 @@ class BaseLCECTestClass(BaseEtherCATTestClass, BaseHALTestClass):
     @classmethod
     def lcec_data_type(cls, type_str):
         if not hasattr(cls, "_lcec_data_type_map"):
+            assert issubclass(cls.data_type_class, LCECDataType), f"{cls.data_type_class} is not subclass of LCECDataType"
             dtm = cls._lcec_data_type_map = dict()
             for dt in cls.data_type_class.all_types():
                 if hasattr(dt, "igh_type"):
