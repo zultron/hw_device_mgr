@@ -62,12 +62,13 @@ class EtherCATDevice(CiA301Device, abc.ABC):
         dev_esi_paths = set()
         for dev in cls.get_model():
             esi_path = dev.xml_description_path()
+            print(f"ESI file path: {esi_path}")
             if esi_path in dev_esi_paths:
+                print(f"   Skipping; read {dev.device_model_id()} already")
                 assert dev.device_model_id() in sdo_data
                 continue
             dev_esi_paths.add(esi_path)
             dev_sdo_data = dev.config_class.get_device_sdos_from_esi(esi_path)
-            print(f"ESI file: {esi_path}")
             print(f"   Read SDO data for {' '.join(str(k) for k in dev_sdo_data.keys())}")
             sdo_data.update(dev_sdo_data)
         return sdo_data
