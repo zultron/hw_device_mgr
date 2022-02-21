@@ -55,7 +55,8 @@ class EtherCATDevice(CiA301Device, abc.ABC):
         Path is under the module directory,
         `{device_xml_dir}/{xml_description_fname}`.
         """
-        return cls.pkg_path(cls.device_xml_dir) / cls.xml_description_fname
+        path = cls.pkg_path(cls.device_xml_dir) / cls.xml_description_fname
+        return path.resolve()
 
     @classmethod
     def read_device_sdos_from_esi(cls):
