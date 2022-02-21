@@ -1,5 +1,5 @@
 from ..mgr.mgr import HWDeviceMgr, SimHWDeviceMgr
-from ..hal.device import HALCompDevice, HALPinDevice, HALDataType
+from ..hal.device import HALCompDevice, HALPinDevice, SimHALPinDevice, HALDataType
 
 
 class HALHWDeviceMgr(HWDeviceMgr, HALCompDevice, HALPinDevice):
@@ -18,5 +18,7 @@ class HALHWDeviceMgr(HWDeviceMgr, HALCompDevice, HALPinDevice):
         super().init_device_instances(comp=self.comp, **kwargs)
 
 
-class SimHALHWDeviceMgr(HALHWDeviceMgr, SimHWDeviceMgr):
+class SimHALHWDeviceMgr(HALHWDeviceMgr, SimHWDeviceMgr, SimHALPinDevice):
     name = "sim_hal_hw_device_mgr"
+    device_base_class = SimHALPinDevice
+    device_classes = (SimHALPinDevice,)

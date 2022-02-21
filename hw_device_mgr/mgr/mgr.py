@@ -62,9 +62,9 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
     ####################################################
     # Initialization
 
-    def __init__(self, sim=False):
+    def __init__(self):
         self.state = "init_command"  # Used by FysomGlobalMixin
-        super().__init__(sim=sim)
+        super().__init__()
         self.fast_track = False
         self.mgr_config = None
         self.device_config = None
@@ -84,13 +84,9 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
 
         Scan devices and configure with data in device configuration
         """
-        mode = "sim" if self.sim else "real-hardware"
-        self.logger.info(f"Configuring devices in {mode} mode")
-
         # Pass config to Config class and scan devices
         assert device_config
         self.init_device_classes(device_config=device_config)
-        kwargs.setdefault("sim", self.sim)
         self.devices = self.scan_devices(**kwargs)
         self.init_device_instances(**device_init_kwargs)
 
@@ -100,8 +96,8 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
         self.device_base_class.set_device_config(device_config)
 
     @classmethod
-    def scan_devices(cls, sim=False, **kwargs):
-        return cls.device_base_class.scan_devices(sim=sim, **kwargs)
+    def scan_devices(cls, **kwargs):
+        return cls.device_base_class.scan_devices(**kwargs)
 
     def init_device_instances(self, **kwargs):
         for i, dev in enumerate(self.devices):
@@ -613,14 +609,6 @@ class HWDeviceMgr(FysomGlobalMixin, HWDeviceMgrCategory):
         event = state_map.get(self.state, f"{state_cmd}_command")
         return event
 
-    def set_sim_feedback(self):
-        sfb = super().set_sim_feedback()
-        sfb.update(
-            state_cmd=self.command_out.get("state_cmd"),
-            quick_stop=self.feedback_in.get("quick_stop"),
-        )
-        return sfb
-
     ####################################################
     # Drive helpers
 
@@ -673,3 +661,11 @@ class SimHWDeviceMgr(HWDeviceMgr, SimDevice):
     @classmethod
     def init_sim(cls, *, sim_device_data):
         cls.device_base_class.init_sim(sim_device_data=sim_device_data)
+
+    def set_sim_feedback(self):
+        sfb = super().set_sim_feedback()
+        sfb.update(
+            state_cmd=self.command_out.get("state_cmd"),
+            quick_stop=self.feedback_in.get("quick_stop"),
+        )
+        return sfb

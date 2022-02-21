@@ -33,9 +33,6 @@ class ROSHWDeviceMgr(HWDeviceMgr):
         self.ros_node = rclpy.create_node(self.name, **node_kwargs)
         self.ros_context = rclpy.utilities.get_default_context()
         self.logger.info(f"Initializing '{self.name}' ROS node")
-        # - Sim mode
-        # FIXME Use this ROS param when HAL ros_launch implemented
-        # self.sim = self.get_param("use_sim", False)
         # - ROS update rate
         self.update_rate = self.get_param("update_rate", 10)
         # - mgr_config

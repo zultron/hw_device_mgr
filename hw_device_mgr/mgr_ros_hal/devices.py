@@ -1,5 +1,5 @@
 # Real devices under LCEC
-from ..hal.device import HALPinDevice, HALDataType
+from ..hal.device import SimHALPinDevice, HALDataType
 from ..lcec.device import LCECDevice, LCECSimDevice
 from ..cia_402.device import CiA402Device, CiA402SimDevice
 from ..ethercat.device import EtherCATSimDevice
@@ -9,7 +9,7 @@ from ..devices.inovance_sv660 import InovanceSV660
 from ..devices.bogus import BogusV1Servo, BogusV2Servo
 
 
-class ManagedDevices(LCECDevice, CiA402Device, HALPinDevice):
+class ManagedDevices(LCECDevice, CiA402Device, SimHALPinDevice):
     category = "managed_lcec_devices"
 
 
@@ -30,7 +30,7 @@ class InovanceSV660LCEC(ManagedDevices, InovanceSV660):
 
 
 class SimManagedEtherCATDevices(
-    EtherCATSimDevice, CiA402SimDevice, HALPinDevice
+    EtherCATSimDevice, CiA402SimDevice, SimHALPinDevice
 ):
     category = "sim_ethercat_managed_devices"
     data_type_class = HALDataType

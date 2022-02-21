@@ -8,11 +8,11 @@ class TestHALHWDeviceMgr(BaseHALMgrTestClass, _TestHWDeviceMgr, _TestHALDevice):
         "HALHWDeviceMgrForTest",
         "SimHALHWDeviceMgr",
         "HALHWDeviceMgr",
-        *_TestHWDeviceMgr.expected_mro[1:5],  # HALHWDeviceMgr inserted...
-        "HALCompDevice",  # HALHWDeviceMgr is a HAL comp
-        _TestHALDevice.expected_mro[1],  # HALPinDevice
-        *_TestHWDeviceMgr.expected_mro[5:-1],  # ...more base mgr class...
-        *_TestHALDevice.expected_mro[-2:],  # HalMixin, etc.
+        *_TestHWDeviceMgr.expected_mro[1:5],  # SimHWDeviceMgr...HWDeviceMgrCategory
+        "HALCompDevice",  # HAL comp (this should be tested, too!)
+        *_TestHALDevice.expected_mro[1:3],  # SimHALPin...HALPin
+        *_TestHWDeviceMgr.expected_mro[5:-1],  # SimDevice...ABC
+        *_TestHALDevice.expected_mro[-2:],  # HalMixin...
     ]
 
     def override_interface_param(self, interface, key, val):
