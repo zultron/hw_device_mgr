@@ -337,14 +337,15 @@ class SimDevice(Device):
 
         for dev in sim_device_data:
             device_cls = cls.sim_device_data_class(dev)
+            address = cls.sim_device_data_address(dev)
 
             # Set sparse keys
             updates = dict(
                 model_id=device_cls.device_model_id(),
                 name=device_cls.name,
-                address=cls.sim_device_data_address(dev),
+                address=address,
             )
-            cls_sim_data[dev["model_id"]] = {**dev, **updates}
+            cls_sim_data[address] = {**dev, **updates}
 
         assert cls_sim_data
 
