@@ -106,3 +106,8 @@ class ROSHWDeviceMgr(HWDeviceMgr):
             self.logger.warning("Caught KeyboardInterrupt")
         self.logger.info("Shutting down")
         rclpy.shutdown()
+
+
+class ROSSimHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
+    # For tests
+    pass
