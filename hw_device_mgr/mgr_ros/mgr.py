@@ -51,6 +51,19 @@ class ROSHWDeviceMgr(HWDeviceMgr):
         assert device_config
         super().init_devices(device_config=device_config, **kwargs)
 
+    def init_sim_from_rosparams(self, **kwargs):
+        sim_device_data_path = self.get_param("sim_device_data_path")
+        assert sim_device_data_path, "No 'sim_device_data_path' param defined"
+        assert os.path.exists(
+            sim_device_data_path
+        ), f"Device data path doesn't exist:  '{sim_device_data_path}'"
+        self.logger.info(
+            f"Reading sim device config from {sim_device_data_path}"
+        )
+        with open(sim_device_data_path, "r") as f:
+            sim_device_data = yaml.safe_load(f)
+        self.init_sim(sim_device_data=sim_device_data, **kwargs)
+
     def read_update_write(self):
         """
         Add interrupt handling and fast-tracking to `read_update_write`.
@@ -93,19 +106,3 @@ class ROSHWDeviceMgr(HWDeviceMgr):
             self.logger.warning("Caught KeyboardInterrupt")
         self.logger.info("Shutting down")
         rclpy.shutdown()
-
-
-class ROSSimHWDeviceMgr(ROSHWDeviceMgr, SimHWDeviceMgr):
-
-    def init_sim_from_rosparams(self, **kwargs):
-        sim_device_data_path = self.get_param("sim_device_data_path")
-        assert sim_device_data_path, "No 'sim_device_data_path' param defined"
-        assert os.path.exists(
-            sim_device_data_path
-        ), f"Device data path doesn't exist:  '{sim_device_data_path}'"
-        self.logger.info(
-            f"Reading sim device config from {sim_device_data_path}"
-        )
-        with open(sim_device_data_path, "r") as f:
-            sim_device_data = yaml.safe_load(f)
-        self.init_sim(sim_device_data=sim_device_data, **kwargs)

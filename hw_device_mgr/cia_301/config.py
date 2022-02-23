@@ -250,7 +250,7 @@ class CiA301Config:
 
 
 class CiA301SimConfig(CiA301Config):
-    """CiA 301 device with simulated command."""
+    """Configuration for simulated devices with simulated command."""
 
     command_class = CiA301SimCommand
 

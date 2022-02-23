@@ -603,6 +603,10 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
     ####################################################
     # Drive helpers
 
+    @classmethod
+    def init_sim(cls, *, sim_device_data):
+        cls.device_base_class.init_sim(sim_device_data=sim_device_data)
+
     def initialize_devices(self):
         # Ensure drive parameters are up to date
         self.logger.info("Initializing devices")
@@ -645,10 +649,6 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
 class SimHWDeviceMgr(HWDeviceMgr, SimDevice):
 
     device_base_class = CiA402SimDevice
-
-    @classmethod
-    def init_sim(cls, *, sim_device_data):
-        cls.device_base_class.init_sim(sim_device_data=sim_device_data)
 
     def set_sim_feedback(self):
         sfb = super().set_sim_feedback()
