@@ -176,6 +176,9 @@ class CiA402Device(CiA301Device):
             fb_out.update(
                 goal_reached=False, goal_reason="; ".join(goal_reasons)
             )
+            self.logger.debug(f"Device {self.address}:  Goal not reached:")
+            for r in goal_reasons:
+                print(f"    - {r}")
         return fb_out
 
     state_bits = {
