@@ -60,7 +60,7 @@ class CiA402Device(CiA301Device):
             if getattr(cls, attr) == mode:
                 return attr
         else:
-            raise AttributeError(f"Unknown control mode '{mode}'")
+            return f"MODE_UNKNOWN({mode})"
 
     # Status word bits not used for CiA402 state machine operation may
     # have other purposes
@@ -140,12 +140,13 @@ class CiA402Device(CiA301Device):
         else:
             raise ValueError(
                 f"Unknown status word 0x{sw:X}; "
-                f"state {self.feedback.get('state')} unchanged"
+                f"state {self.feedback_out.get('state')} unchanged"
             )
         if self._get_next_transition() is not None:
             goal_reached = False
             state_cmd = self.command_in.get("state")
-            goal_reasons.append(f"state {state} != {state_cmd}")
+            sw = self.feedback_in.get("status_word")
+            goal_reasons.append(f"state {state} (0x{sw:08X}) != {state_cmd}")
 
         # Calculate 'transition' feedback
         new_st, old_st = self.feedback_out.changed("state", return_vals=True)
