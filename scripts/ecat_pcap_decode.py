@@ -13,8 +13,9 @@ import sys
 import re
 import enum
 import pyshark
+from hw_device_mgr.lcec.command import LCECCommand
 
-# $0 /home/zultron/elmo.2022-02-24.ethercat_switch_on_disabled.pcapng
+# $0 ~/elmo.2022-02-24.ethercat_switch_on_disabled.pcapng
 
 class PDO(int):
     def __new__(cls, number, base=10, **kwargs):
@@ -51,9 +52,44 @@ class EcatDecoder:
         # Above link doesn't list FRMW, but pcap dissectors do
         FRMW=14
 
-    def __init__(self, fname, pdos):
+    def __init__(self, pdos, bus=0):
         self.fname = fname
         self.pdos = pdos
+        self.cap = None
+        self.command = LCECCommand()
+        self.bus = bus
+
+    def live_capture(self, **pyshark_kwargs):
+        cap = pyshark.LiveCapture(LCECCommand().master_nic())
+        cap.sniff(**pyshark_kwargs)
+        self.cap = cap
+
+    def file_capture(self, fname):
+        assert os.path.exists(fname), f"File '{fname}' doesn't exist"
+        cap = pyshark.FileCapture(fname)
+        self.cap = cap
+
+    def read_pdo_mapping(self, address, index):
+        nr_assgn = cmd.upload(address=address, index=index, datatype=dtc.uint8)
+        assert nr_mappings == 1, f"{address:04X}h assignments {nr_assgn} != 1"
+        assgn_ix = cmd.upload(address=address, index=index, subindex=1, datatype=dtc.uint16)
+        nr_pdos = cmd.upload(address=address, index=assgn_ix, datatype=dtc.uint8)
+        res = list()
+        for i in range(nr_pdos):
+            raw = cmd.upload(address=address, index=assgn_ix, subindex=i+1, datatype=dtc.uint32)
+            ix = (raw & 0xFFFF0000) >> 16
+            subidx = raw & 0x000000FF
+            res.append((ix, subidx))
+            # FIXME add SDO length
+        return res
+
+    def scan_pdos(self):
+        devs = list()
+        cmd = self.command
+        dtc = cmd.data_type_class
+        for address, model_id in self.command.scan_bus(bus=self.bus):
+            sm2_pdos = self.read_pdo_mapping(address=address, index=0x1C12)
+            sm2_pdos = self.read_pdo_mapping(address=address, index=0x1C13)
 
     def timestamp_diff(self, pkt1, pkt2):
         diff = float(pkt1.sniff_timestamp) - float(pkt2.sniff_timestamp)
@@ -97,8 +133,6 @@ class EcatDecoder:
             # PDO values are in reverse order; pull values off end
             res[pdo] = PDO(octets[-length*2:], base=16, pdo=pdo, length=length)
             octets = octets[:-length*2]
-            # res.append(int(octets[:length*2], 16))
-            # octets = octets[length*2:]
         assert octets == ""
         return res
 
@@ -108,10 +142,42 @@ class EcatDecoder:
         max_p = max(deltas)
         return avg_p, min_p, max_p
 
+    def print_ecat_datagram(self, d):
+        if d['cmd'] != self.ecat_cmd.LRW:
+            return
+        pdos = self.decode_lrw_pdos(d)
+        for k, v in pdos.items():
+            print(f"  {k}:  {v}")
+
+    def ecat_layers(self, pkt):
+        return [l for l in pkt.layers if l.layer_name == "ecat"]
+
+    def lrw_command(self, pkt):
+        for l in self.ecat_layers(pkt):
+            for d in self.layer_datagrams(l):
+                if d['cmd'] == self.ecat_cmd.LRW:
+                    return d
+        return None
+
+    def is_op_enab(self, pkt):
+        cmd = self.lrw_command(pkt)
+        if not cmd:
+            return None
+        pdos = self.decode_lrw_pdos(cmd)
+        return (pdos['6041h'] & 0x27) == 0x27
+
+    def print_ecat_packet(self, ix, pkt, delta):
+        print(f"Packet #{ix}:  time delta (ns): {delta}")
+        cmd = self.lrw_command(pkt)
+        if not cmd:
+            print("  (No LRW command)")
+        self.print_ecat_datagram(cmd)
+
     def read_packets(self):
-        cap = pyshark.FileCapture(self.fname)
-        prev_pkt = None
-        deltas = list()
+        assert self.hasattr("cap"), "No file or live capture to process"
+        prev_pkts = list()
+        print_more = 0
+        delta = 0
         for count, pkt in enumerate(cap):
             ethercat_layer = pkt.layers[0]
             assert ethercat_layer.layer_name == "eth"
@@ -121,42 +187,25 @@ class EcatDecoder:
                 # it?)
                 continue
 
-            ecat_layers = [l for l in pkt.layers if l.layer_name == "ecat"]
-            if not ecat_layers:
-                continue  # Skip packets without EtherCAT layers
+            if prev_pkts:
+                prev_pkt, prev_delta, prev_count = prev_pkts[-1]
+                delta = self.timestamp_diff(pkt, prev_pkt)
+                if delta > 2500000 and self.is_op_enab(prev_pkt):
+                        # Print previous packet:  After >~2.5ms, already disabled
+                        self.print_ecat_packet(prev_count, prev_pkt, prev_delta)
+                        print_more = 4
+            if print_more:
+                print_more -= 1
+                self.print_ecat_packet(count, pkt, delta)
+                if not print_more:
+                    print("----------------------")
 
-            td = ""
-            if prev_pkt:
-                deltas.append(self.timestamp_diff(pkt, prev_pkt))
-                td = f"  time delta (ns): {deltas[-1]}"
-            print(f"Packet #{count}:{td}")
-            # print(pkt)
-            # print("time:", pkt.sniff_timestamp)
-            # self.print_obj(ethercat_layer)
-            for layer in ecat_layers:
-                # print("layer.subframe_length:", layer.subframe_length)
-                # self.print_obj(layer)
-                for d in self.layer_datagrams(layer):
-                    # print(f"sub{d.pop('ix')}:")
-                    # for k, v in d.items():
-                    #     print(f"  {k}:  {repr(v)}")
-                    if d['cmd'] == self.ecat_cmd.LRW:
-                        print("  LRW cmd PDOs:")
-                        for k, v in self.decode_lrw_pdos(d).items():
-                            print(f"    {k}:  {v}")
-                # layer.pretty_print()
-                # if layer.cmd == 0xC
-
-            prev_pkt = pkt
-            # if count > 4:
-            #     break
-
-        avg_p, min_p, max_p = self.delta_stats(deltas)
-        print(f"Update period stats:  avg={avg_p}, min={min_p}, max={max_p}")
+            prev_pkts.append((pkt, delta, count))
+            if len(prev_pkts) > 10:
+                prev_pkts.pop(0)
 
 if __name__ == '__main__':
     fname = sys.argv[1]
-    assert os.path.exists(fname), f"File '{fname}' doesn't exist"
     pdos = [
         ('6040h', 2),
         ('6060h', 1),
@@ -172,11 +221,6 @@ if __name__ == '__main__':
         ('603Fh', 2),
     ]
 
-    d = EcatDecoder(fname, pdos)
+    d = EcatDecoder(pdos)
+    d.file_capture(fname)
     d.read_packets()
-
-    # orig, counts = sys.argv[1], sys.argv[2:]
-    # res = decode(orig, *counts)
-    # print(orig)
-    # print(''.join(orig[i-2:i] for i in range(len(orig), 0, -2)))
-    # print(' '.join(f"0x{{:0{int(l)*2}X}}".format(r) for r,l in zip(res, counts)))
