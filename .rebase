@@ -1,3 +1,4 @@
+- config_io refactor
 - minor but potentially breaking changes to device classes
 - generic, minor, ROS-related changes
 - generic, minor changes
