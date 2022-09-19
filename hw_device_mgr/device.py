@@ -15,9 +15,12 @@ class Device(abc.ABC):
     logger = Logging.getLogger(__name__)
 
     data_type_class = DataType
+    interface_class = Interface
 
     feedback_in_data_types = dict()
-    feedback_out_data_types = dict()
+    feedback_out_data_types = dict(
+        goal_reached="bit", goal_reason="str", fault="bit"
+    )
     command_in_data_types = dict()
     command_out_data_types = dict()
 
@@ -37,17 +40,16 @@ class Device(abc.ABC):
 
     def __init__(self, address=None):
         self.address = address
-        self.init_interfaces()
 
     def init(self):
         """
-        Initialize device.
+        Initialize device and interfaces.
 
         Subclasses may implement `init()` for extra initialization
         outside the constructor.  Implementations should always call
         `super().init()`.
         """
-        pass
+        self.init_interfaces()
 
     @classmethod
     def merge_dict_attrs(cls, attr):
@@ -90,7 +92,7 @@ class Device(abc.ABC):
                     defaults[k] = v.copy()
             dt_names = self.merge_dict_attrs(f"{name}_data_types")
             data_types = {k: dt_name2cls(v) for k, v in dt_names.items()}
-            intfs[name] = Interface(name, defaults, data_types)
+            intfs[name] = self.interface_class(name, defaults, data_types)
 
     def interface(self, name):
         return self._interfaces[name]
@@ -348,7 +350,7 @@ class SimDevice(Device):
         return sim_device_data["position"]
 
     @classmethod
-    def init_sim(cls, *, sim_device_data):
+    def init_sim(cls, /, sim_device_data):
         """
         Create sim device objects for tests.
 
