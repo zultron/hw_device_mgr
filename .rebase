@@ -1,3 +1,4 @@
+- Fault handling; SDO abstraction
 - ErrorDevice updates
 - PDO configuration in `device_config.yaml`
 - config_io refactor
