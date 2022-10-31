@@ -25,12 +25,14 @@ class CiA301Device(Device):
 
     def __init__(self, address=None, **kwargs):
         if isinstance(address, self.config_class):
-            self.config = address
-            address = address.address
+            # Config passed in instead of address; reuse it
+            config = address
+            address = config.address
         else:
-            self.config = self.config_class(
+            config = self.config_class(
                 address=address, model_id=self.model_id
             )
+        self.config = config
         super().__init__(address=address, **kwargs)
 
     @classmethod
