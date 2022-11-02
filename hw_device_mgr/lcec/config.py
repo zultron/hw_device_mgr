@@ -48,6 +48,7 @@ class LCECConfig(EtherCATConfig):
             slave_xml = etree.Element(
                 "slave",
                 idx=str(dev.position),
+                alias=str(dev.alias),
                 type="generic",
                 vid=str(dev.vendor_id),
                 pid=str(dev.product_code),

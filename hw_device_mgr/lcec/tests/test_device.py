@@ -21,7 +21,7 @@ class TestLCECDevice(BaseLCECTestClass, _TestEtherCATDevice, _TestHALDevice):
     @pytest.fixture
     def obj(self, sim_device_data, mock_halcomp):
         self.obj = self.device_model_cls(
-            address=sim_device_data["test_address"]
+            address=sim_device_data["address"]
         )
         self.obj.init(comp=mock_halcomp)
         yield self.obj
