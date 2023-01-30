@@ -146,8 +146,8 @@ class Device(abc.ABC):
         now = time.time()
         if fb_out.changed("goal_reached"):
             # goal_reached just changed to False; set timer
-            self._timeout = now
-        elif self._timeout - now > self.goal_reached_timeout:
+            self._timeout = now + self.goal_reached_timeout
+        elif now > self._timeout:
             # Goal not reached for longer than timeout; set fault
             msg = f"Timeout ({self.goal_reached_timeout}) while "
             msg += fb_out.get("goal_reason")

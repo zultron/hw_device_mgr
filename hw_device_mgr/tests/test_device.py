@@ -2,6 +2,7 @@ import pytest
 from .base_test_class import BaseTestClass
 from ..device import Device
 import subprocess
+import time
 from pprint import pformat
 
 
@@ -141,6 +142,31 @@ class TestDevice(BaseTestClass):
         with gv_file.open("w") as f:
             f.write(Device.dot())
         subprocess.check_call(["dot", "-Tpng", "-O", gv_file])
+
+    def test_check_and_set_timeout(self, obj, mock_time):
+        fb_out = obj.feedback_out
+        self.now = 10000  # Fake value returned by time.time()
+
+        # If goal_reached, then timer isn't running
+        fb_out.set(goal_reached=True)
+        assert fb_out.get("goal_reached")  # Sanity
+        obj.check_and_set_timeout()
+        assert not fb_out.get("fault")
+
+        # If goal_reached is newly cleared, then new timer is set
+        fb_out.set(goal_reached=False)
+        assert not fb_out.get("goal_reached")  # Sanity
+        assert fb_out.changed("goal_reached")  # Sanity
+        obj.check_and_set_timeout()
+        assert not fb_out.get("fault")
+
+        # If goal_reached is not newly cleared, then fault is set
+        fb_out.set(goal_reached=False)
+        assert not fb_out.get("goal_reached")  # Sanity
+        assert not fb_out.changed("goal_reached")  # Sanity
+        self.now += obj.goal_reached_timeout + 1
+        obj.check_and_set_timeout()
+        assert fb_out.get("fault")
 
     #########################################
     # Test read()/update()/write() integration
