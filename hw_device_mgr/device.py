@@ -131,26 +131,27 @@ class Device(abc.ABC):
         """Process `feedback_in` and return `feedback_out` interface."""
         fb_in = self._interfaces["feedback_in"].get()
         self._interfaces["feedback_out"].set(**fb_in)
+        self.check_and_set_timeout()
         return self._interfaces["feedback_out"]
 
     def check_and_set_timeout(self):
         """Set fault if feedback_out goal_reached is False for too long."""
         fb_out = self._interfaces["feedback_out"]
-        if fb_out.get("goal_reached"):
-            # Goal reached; cancel any timer
+        _, goal_reached_old = fb_out.changed("goal_reached", return_vals=True)
+        if goal_reached_old:
+            # Goal reached in previous cycle; cancel any timer
             self._timeout = None
             return
 
-        # Goal not reached
+        # Goal not reached in previous cycle
         now = time.time()
         if self._timeout is None:
             # goal_reached just changed to False; set timer
             self._timeout = now + self.goal_reached_timeout
         elif now > self._timeout:
             # Goal not reached for longer than timeout; set fault
-            msg = f"Timeout ({self.goal_reached_timeout}) while "
-            msg += fb_out.get("goal_reason")
-            fb_out.update(fault=True, goal_reason=msg)
+            msg = fb_out.get("goal_reason")
+            fb_out.update(fault=True, goal_reached=False, goal_reason=msg)
             if fb_out.changed("fault"):
                 self.logger.error(f"{self}:  {msg}")
 
