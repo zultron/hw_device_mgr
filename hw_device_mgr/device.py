@@ -131,7 +131,6 @@ class Device(abc.ABC):
         """Process `feedback_in` and return `feedback_out` interface."""
         fb_in = self._interfaces["feedback_in"].get()
         self._interfaces["feedback_out"].set(**fb_in)
-        self.check_and_set_timeout()
         return self._interfaces["feedback_out"]
 
     def check_and_set_timeout(self):
@@ -144,7 +143,7 @@ class Device(abc.ABC):
 
         # Goal not reached
         now = time.time()
-        if fb_out.changed("goal_reached"):
+        if self._timeout is None:
             # goal_reached just changed to False; set timer
             self._timeout = now + self.goal_reached_timeout
         elif now > self._timeout:
@@ -152,7 +151,8 @@ class Device(abc.ABC):
             msg = f"Timeout ({self.goal_reached_timeout}) while "
             msg += fb_out.get("goal_reason")
             fb_out.update(fault=True, goal_reason=msg)
-            self.logger.error(msg)
+            if fb_out.changed("fault"):
+                self.logger.error(f"{self}:  {msg}")
 
     def set_command(self, **kwargs) -> Interface:
         """Process `command_in` and return `command_out` interface."""
