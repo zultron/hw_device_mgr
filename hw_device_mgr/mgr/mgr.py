@@ -429,11 +429,17 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
     def get_feedback(self):
         """Process manager and device external feedback."""
         mgr_fb_out = super().get_feedback()
+        fault = mgr_fb_out.get("fault")
+        goal_reached = True
+        fault_desc = ""
+
+        # When in FAULT state, register fault in feedback
+        if self.interface("command_out").get("state") == self.STATE_FAULT:
+            fault = True
 
         # Get device feedback
-        fault = mgr_fb_out.get("fault")
-        fault_desc = list()
-        waiting_on_devs = list()
+        fault_desc_hash = dict()
+        waiting_devs = list()
         for dev in self.devices:
             dev_fb_out = self.get_device_feedback(dev)
             prefix = self.dev_prefix(dev, suffix=dev.slug_separator)
@@ -446,33 +452,46 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
             }
             mgr_fb_out.update(**updates)
             if dev_fb_out.get("fault"):
-                fault = True
-                dev_fault_desc = dev_fb_out.get("fault_desc")
-                fault_desc.append(f"{str(dev.address)}: {dev_fault_desc}")
+                if dev_fb_out.changed("fault"):
+                    fault = True  # Only new device faults cause mgr faults
+                fault_desc_hash[dev] = dev_fb_out.get("fault_desc")
             if not dev_fb_out.get("goal_reached"):
-                waiting_on_devs.append(str(dev.address))
+                waiting_devs.append(dev)
 
-        if waiting_on_devs:
+        # Set goal reached & reason status
+        if waiting_devs:
             goal_reached = False
-            goal_reason = f"Waiting on devices {', '.join(waiting_on_devs)}"
+            goal_reason = f"Waiting on {len(waiting_devs)} devices"
         else:
             goal_reached, goal_reason = True, ""
 
-        if self.interface("command_out").get("state") == self.STATE_FAULT:
-            # Already in DS402 FAULT state, so throw away faults collected from drives
-            # & recycle previous fault log
-            fault = True
-            state_fault_log = self.interface("command_out").get("state_log")
-            fault_desc = [state_fault_log]
-        elif fault_desc:
-            # Not in DS402 FAULT state; use drive errors
-            fault_desc=["Devices set fault:  " + "; ".join(fault_desc)]
-            mgr_fb_out.update(
-                fault=fault,
-                fault_desc="; ".join(fault_desc),
-                goal_reached=goal_reached,
-                goal_reason=goal_reason
-            )
+        # Dedup fault_desc
+        fault_desc_rev_hash = dict()
+        for dev, desc in fault_desc_hash.items():
+            fault_desc_rev_hash.setdefault(desc, list()).append(dev)
+        dev_fault_desc_list = list()
+        for desc, devs in fault_desc_rev_hash.items():
+            if not desc:
+                continue  # Ignore empty descriptions
+            devs_str = ",".join(str(d).replace(" ","") for d in devs)
+            dev_fault_desc_list.append(f"{desc} ({devs_str})")
+        dev_fault_desc = "; ".join(dev_fault_desc_list)
+
+        # Set any fault description
+        if fault:
+            if fault_desc_hash:
+                fault_desc = f"Device faults:  {dev_fault_desc}"
+            else:
+                # Use state_log if no device faults
+                fault_desc = self.interface("command_out").get("state_log")
+
+        # Update feedback out, log, return
+        mgr_fb_out.update(
+            fault=fault,
+            fault_desc=fault_desc,
+            goal_reached=goal_reached,
+            goal_reason=goal_reason
+        )
         if mgr_fb_out.changed("goal_reason"):
             if mgr_fb_out.get("goal_reached"):
                 self.logger.info("All devices reached goal")
@@ -503,14 +522,9 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         # current command:
         if self.query_devices(fault=True, changed=True):
             # Devices newly set `fault` since last update
-            fds = self.query_devices(fault=True)
-            msg = "; ".join(
-                f"{str(d.address)}: {d.feedback_out.get('fault_desc')}"
-                for d in fds
-            )
             cmd_out.update(
                 state=self.STATE_FAULT,
-                state_log=f"Devices set fault:  {msg}",
+                state_log=f"Device fault",
             )
         elif cmd_in.get("state_cmd") not in self.cmd_int_to_name_map:
             state_cmd = cmd_in.get("state_cmd")
