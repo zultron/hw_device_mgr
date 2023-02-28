@@ -91,11 +91,11 @@ class CiA301Device(Device):
     def log_operational_changes(self):
         if self.feedback_in.changed("online"):
             st_new, st_old = self.feedback_in.changed("online", True)
-            self.logger.info(f"{self} online status was {st_old}, now {st_new}")
+            self.logger.info(f"Online status was {st_old}, now {st_new}")
         if self.feedback_in.changed("oper"):
             st_new, st_old = self.feedback_in.changed("oper", True)
             self.logger.info(
-                f"{self} operational status was {st_old}, now {st_new}"
+                f"Operational status was {st_old}, now {st_new}"
             )
 
     @classmethod
