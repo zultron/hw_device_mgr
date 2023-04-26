@@ -87,7 +87,10 @@ class LCECConfig(EtherCATConfig):
                 sm_xml.append(pdo_xml)
                 for entry in sm_data["pdo_mapping"]["entries"]:
                     sdo = dev.sdo(entry["index"])
-                    dt = sdo.data_type
+                    if "scale" in entry:
+                        dt = cls.data_type_class.float
+                    else:
+                        dt = sdo.data_type
                     pdo_entry_xml = etree.Element(
                         "pdoEntry",
                         idx=str(sdo.index),
@@ -98,6 +101,11 @@ class LCECConfig(EtherCATConfig):
                     if "name" in entry:
                         pdo_entry_xml.set("halPin", entry["name"])
                         pdo_entry_xml.set("halType", dt.hal_type_str()[4:])
+                        if "scale" in entry:
+                            pdo_entry_xml.set("scale", str(entry["scale"]))
+                        if "offset" in entry:
+                            pdo_entry_xml.set("offset", str(entry["offset"]))
+
                     else:
                         # complexEntry
                         pdo_entry_xml.set("halType", "complex")
