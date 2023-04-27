@@ -20,12 +20,8 @@ class ErrorDevice(Device, ConfigIO):
     feedback_in_data_types = dict(error_code="uint32")
     feedback_in_defaults = dict(error_code=0)
 
-    feedback_out_defaults = dict(
-        error_code=0, description="No error"
-    )
-    feedback_out_data_types = dict(
-        error_code="uint32", description="str"
-    )
+    feedback_out_defaults = dict(error_code=0, description="No error")
+    feedback_out_data_types = dict(error_code="uint32", description="str")
 
     no_error = feedback_out_defaults
 
@@ -51,7 +47,7 @@ class ErrorDevice(Device, ConfigIO):
             keys = set(cls.no_error.keys())
             keys.discard("error_code")
             for err_code_str, err_data_raw in err_yaml.items():
-                err_data = { k:err_data_raw[k] for k in keys }
+                err_data = {k: err_data_raw[k] for k in keys}
                 errs[int(err_code_str, 0)] = err_data
         return errs
 
