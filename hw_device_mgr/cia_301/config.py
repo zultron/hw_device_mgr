@@ -78,7 +78,7 @@ class CiA301Config(LoggingMixin):
 
     def __str__(self):
         cname = self.__class__.__name__
-        return f"{cname}:{self.model_id}@{self.address}".replace(" ","")
+        return f"{cname}:{self.model_id}@{self.address}".replace(" ", "")
 
     def __repr__(self):
         return f"<{self}>"
