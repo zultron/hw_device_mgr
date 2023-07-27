@@ -4,6 +4,7 @@ from ..elmo_gold import ElmoGold420, ElmoGold520
 from ..inovance_is620n import InovanceIS620N
 from ..inovance_sv660 import InovanceSV660
 from ..eve_xcr_e import EVEXCRE
+from ..evs_xcr_e import EVSXCRE
 from ...tests.interface import DebugInterface
 
 
