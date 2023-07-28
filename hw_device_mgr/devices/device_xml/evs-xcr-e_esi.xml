@@ -2296,7 +2296,7 @@
                 <Name>STRING(6)</Name>
                 <BitSize>48</BitSize>
               </DataType>
-              <DataType>
+              <!-- <DataType>
                 <Name>DT58B2</Name>
                 <BitSize>4112</BitSize>
                 <SubItem>
@@ -2364,7 +2364,7 @@
                     <Setting>0</Setting>
                   </Flags>
                 </SubItem>
-              </DataType>
+              </DataType> -->
               <DataType>
                 <Name>STRING(10)</Name>
                 <BitSize>80</BitSize>
@@ -4480,7 +4480,7 @@
                   <Setting>0</Setting>
                 </Flags>
               </Object>
-              <Object>
+              <!-- <Object>
                 <Index>#x58b2</Index>
                 <Name>Monitoring data</Name>
                 <Type>DT58B2</Type>
@@ -4499,7 +4499,7 @@
                     </Info>
                   </SubItem>
                 </Info>
-              </Object>
+              </Object> -->
               <Object>
                 <Index>#x58b3</Index>
                 <Name>Actual number of disturbance samples</Name>
@@ -4515,7 +4515,7 @@
                   <Setting>0</Setting>
                 </Flags>
               </Object>
-              <Object>
+              <!-- <Object>
                 <Index>#x58b4</Index>
                 <Name>Disturbance data</Name>
                 <Type>DT58B4</Type>
@@ -4534,7 +4534,7 @@
                     </Info>
                   </SubItem>
                 </Info>
-              </Object>
+              </Object> -->
               <Object>
                 <Index>#x58b5</Index>
                 <Name>Monitoring maximum size</Name>
