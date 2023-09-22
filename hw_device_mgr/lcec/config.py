@@ -108,6 +108,11 @@ class LCECConfig(EtherCATConfig):
                     pdo_xml.append(pdo_entry_xml)
                     if "name" in entry:
                         hal_type = dt.hal_type_str()[4:].lower()
+                        if (
+                            hal_type == "float"
+                            and sdo.data_type.name.startswith("UINT")
+                        ):
+                            hal_type = "float-unsigned"
                         pdo_entry_xml.set("halType", hal_type)
                         pdo_entry_xml.set("halPin", entry["name"])
                         if "scale" in entry:
