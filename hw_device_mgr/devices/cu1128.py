@@ -7,4 +7,4 @@ class CU1128(EtherCATDevice):
     vendor_id = 0x00000002
     product_code = 0x04685432
     xml_description_package = "hw_device_mgr.devices.device_xml"
-    xml_description_fname = "Beckhoff CUxxxx.xml"
+    xml_description_fname = "Beckhoff_CUxxxx.xml"
