@@ -541,38 +541,35 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         cmd_out = super().set_command(**cmd_in_kwargs)
         cmd_out.update(**old_cmd_out)
         cmd_in = self.command_in
+        fb_out = self.feedback_out
 
-        # Check for new command
+        # Check for new external command
+        effect_external_state_cmd = False
         if self.command_in.rising_edge("state_set"):
             # state_set went high; log it
-            new_state_cmd = True
-            state_int = self.command_in.get("state_cmd")
-            state = self.cmd_int_to_name_map[state_int]
-            if self.command_in.get("state_cmd") != cmd_out.get("state"):
-                self.logger.info(f"State command set:  '{state}'")
-            else:
+            state_int = cmd_in.get("state_cmd")
+            state = self.cmd_int_to_name_map.get(state_int, None)
+            if state is None:
+                self.logger.error(f"Invalid state command, '{state_int}'")
+            elif state_int == cmd_out.get("state"):
                 self.logger.info(f"State command set:  '{state}' (unchanged)")
-        else:
-            new_state_cmd = False
+            else:
+                self.logger.info(f"State command set:  '{state}'")
+                effect_external_state_cmd = True
 
-        # Special cases where 'fault' or incoming command update overrides
-        # current command:
-        if cmd_in.get("state_cmd") not in self.cmd_int_to_name_map:
-            msg = f"Invalid state command, '{cmd_in.get('state_cmd')}'"
-            self.logger.error(msg)
-            cmd_out.update(state=self.STATE_FAULT, state_log=msg)
-        elif old_cmd_out.get(
-            "state"
-        ) != self.STATE_FAULT and self.feedback_out.get("fault"):
-            # Fault feedback not from device faults (e.g. timeout)
-            if self.feedback_out.changed("fault"):
+        # A new fault will override external command update
+        new_fault_fb = fb_out.get("fault") and fb_out.changed("fault")
+        if new_fault_fb and old_cmd_out.get("state") != self.STATE_FAULT:
+            self.set_command_handle_fault_fb()
+
+            if effect_external_state_cmd and cmd_out.get("fault"):
+                state = self.cmd_int_to_name_map.get(state_int, None)
                 self.logger.warning(
-                    "Manager/device fault; entering fault state"
+                    f"Ignoring new '{state}' command after fault"
                 )
-            if new_state_cmd:
-                self.logger.warning("Ignoring new state command")
-            cmd_out.update(state=self.STATE_FAULT, state_log="Manager fault")
-        elif new_state_cmd:
+                effect_external_state_cmd = False
+
+        if effect_external_state_cmd:
             # state_set went high; latch state_cmd from kwargs
             cmd_out.update(
                 state=cmd_in.get("state_cmd"),
@@ -614,6 +611,18 @@ class HWDeviceMgr(FysomGlobalMixin, Device):
         # Set drive command and return
         self.set_drive_command()
         return cmd_out
+
+    def set_command_handle_fault_fb(self):
+        """
+        Handle new fault feedback from a drive.
+
+        Only called while mgr was not previously in fault state.
+        """
+        if self.feedback_out.changed("fault"):
+            self.logger.warning("Manager/device fault; entering fault state")
+        self.command_out.update(
+            state=self.STATE_FAULT, state_log="Manager fault"
+        )
 
     def write(self):
         """Write manager and device external command."""
