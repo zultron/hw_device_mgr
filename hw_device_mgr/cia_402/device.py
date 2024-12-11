@@ -844,16 +844,16 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
             if new_setpoint or setpoint_ack:
                 # Pretend we haven't reached new target before it's even set
                 return False
-            dtg = abs(fb_in.get("position_cmd") - fb_in.get("position_fb"))
-            return dtg < self.position_goal_tolerance
+            perr = abs(fb_in.get("position_cmd") - fb_in.get("position_fb"))
+            return perr < self.position_goal_tolerance
         elif control_mode == self.MODE_PV:
             #zero_speed = self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_1")
             #if zero_speed: ??
-            dtg = abs(fb_in.get("velocity_cmd") - fb_in.get("velocity_fb"))
-            return dtg < self.velocity_goal_tolerance
+            verr = abs(fb_in.get("velocity_cmd") - fb_in.get("velocity_fb"))
+            return verr < self.velocity_goal_tolerance
         elif control_mode == self.MODE_PT:
-            dtg = abs(fb_in.get("torque_cmd") - fb_in.get("torque_fb"))
-            return dtg < self.torque_goal_tolerance
+            terr = abs(fb_in.get("torque_cmd") - fb_in.get("torque_fb"))
+            return terr < self.torque_goal_tolerance
 
     def set_sim_feedback_ppvt(self, cw, sw):
         # In MODE_PP, cw OPERATION_MODE_SPECIFIC_1 is NEW_SETPOINT cmd, sw
