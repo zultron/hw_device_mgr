@@ -14,6 +14,10 @@
     d.x.control_mode_fb:  0  # Undefined
     d.x.position_cmd:  0.0
     d.x.position_fb:  0.0
+    d.x.velocity_cmd:  0
+    d.x.velocity_fb:  0
+    d.x.torque_cmd:  0
+    d.x.torque_fb:  0
     # - STO
     d.x.sto:  False
     # - errors
@@ -45,6 +49,9 @@
     d.x.goal_reached:  False
     d.x.goal_reason:  Offline
     d.x.move_success: False
+    d.x.velocity_success:  False
+    d.x.velocity_zero:  False
+    d.x.torque_success:  False
     d.x.move_setpoint_ack: False
     d.x.following_error: False
     # - STO
@@ -63,6 +70,8 @@
     d.x.control_mode:  8  # MODE_CSP
     d.x.home_request: False
     d.x.move_request: False
+    d.x.velocity_request:  False
+    d.x.torque_request:  False
     d.x.relative_target: False
   command_out:
     shutdown_latch:  False
@@ -91,6 +100,10 @@
     d.x.control_mode_fb:  0  # Undefined
     d.x.position_cmd:  0.0
     d.x.position_fb:  0.0
+    d.x.velocity_cmd:  0
+    d.x.velocity_fb:  0
+    d.x.torque_cmd:  0
+    d.x.torque_fb:  0
     # - STO
     d.x.sto:  False
     # - errors
