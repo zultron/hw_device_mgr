@@ -36,6 +36,9 @@ class TestCiA402DeviceRUW(_TestCiA301DeviceRUW, BaseCiA402TestClass):
     def test_read_update_write(self, obj):
         self.read_update_write_helper(obj, self.read_update_write_402_yaml)
 
+    def test_read_update_write_pv(self, obj):
+        self.read_update_write_helper(obj, "pv.cases.yaml")
+
 
 class TestCiA402DeviceRUWHMTimeout(TestCiA402DeviceRUW):
     def test_read_update_write(self, obj, mock_time):
