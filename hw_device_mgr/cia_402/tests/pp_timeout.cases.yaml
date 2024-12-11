@@ -41,11 +41,9 @@
     goal_reached:  True
     goal_reason:  Reached
     move_success:  False
-    velocity_success:  False
     velocity_zero:  False
     velocity_cmd:  0
     velocity_fb:  0
-    torque_success:  False
     torque_cmd:  0
     torque_fb:  0
     following_error:  False
@@ -63,8 +61,6 @@
     reset_fault: False
     home_request:  False
     move_request:  True
-    velocity_request:  False
-    torque_request:  False
     relative_target:  False
     shutdown:  False
   command_out:

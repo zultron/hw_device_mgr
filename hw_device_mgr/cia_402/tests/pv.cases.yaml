@@ -40,9 +40,7 @@
     goal_reached:  True
     goal_reason:  Reached
     move_success:  False
-    velocity_success:  False
     velocity_zero:  False
-    torque_success:  False
     following_error:  False
     move_setpoint_ack: False
     position_cmd:  0.0
@@ -61,14 +59,12 @@
     reset_fault: False
     home_request:  False
     move_request:  False
-    velocity_request:  True
-    torque_request:  False
     relative_target:  False
   command_out:
     control_word:  0x000F  # OPERATION ENABLED
     control_mode:  3  # MODE_PV
     init_params:  True
-    fasttrack:  True
+    fasttrack:  False
   sim_feedback:
     online:  True
     oper:  True
@@ -91,7 +87,6 @@
     status_word:  0x0437  # OPERATION ENABLED + VOLTAGE_ENABLED + TARGET_REACHED
   feedback_out:
     status_word:  0x0437  # OPERATION ENABLED + VOLTAGE_ENABLED + TARGET_REACHED
-    velocity_success:  True
     velocity_cmd:  15.0
   command_out:
     init_params:  False
@@ -106,9 +101,6 @@
     velocity_fb:  10.0
   feedback_out:
     status_word:  0x0037
-    goal_reached:  False
-    goal_reason:  velocity not reached
-    velocity_success:  False
     velocity_fb:  10.0
 - desc:  "PV move:  Wait for velocity (2)"
   sim_feedback_set:
@@ -128,9 +120,6 @@
     status_word:  0x0437  # OPERATION ENABLED + VOLTAGE_ENABLED + TARGET_REACHED
   feedback_out:
     status_word:  0x0437  # OPERATION ENABLED + VOLTAGE_ENABLED + TARGET_REACHED
-    goal_reached:  True
-    goal_reason:  Reached
-    velocity_success:  True
 - desc:  "PV move:  Velocity cmd hold"
   sim_feedback_set:
     velocity_cmd:  15.0
@@ -152,16 +141,12 @@
     status_word:  0x001F  # FAULT REACTION ACTIVE
     state:  FAULT REACTION ACTIVE
     transition:  13  # (Any)->FAULT REACTION ACTIVE
-    goal_reason:  state FAULT REACTION ACTIVE != OPERATION ENABLED; Velocity request while drive not enabled; Fault (no error code)
-    velocity_success:  False
+    goal_reason:  state FAULT REACTION ACTIVE != OPERATION ENABLED; Fault (no error code)
     fault:  True
     fault_desc:  Fault (no error code)
     velocity_fb:  0.0
-  command_in:
-    velocity_request:  False
   command_out:
     control_word:  0x0000
-    fasttrack:  False
   sim_feedback:
     status_word:  0x0018  # FAULT + VOLTAGE_ENABLED
 - desc:  "PV move FAULT:  FAULT; clear fault"

@@ -39,11 +39,9 @@
     goal_reached:  False
     goal_reason:  Offline
     move_success:  False
-    velocity_success:  False
     velocity_zero:  False
     velocity_cmd:  0
     velocity_fb:  0
-    torque_success:  False
     torque_cmd:  0
     torque_fb:  0
     following_error:  False
@@ -63,8 +61,6 @@
     control_mode:  8  # MODE_CSP
     home_request:  False
     move_request:  False
-    velocity_request:  False
-    torque_request:  False
     relative_target:  False
     reset_fault: False
   command_out:
