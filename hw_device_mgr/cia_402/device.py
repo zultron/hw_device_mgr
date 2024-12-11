@@ -855,33 +855,16 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
             dtg = abs(fb_in.get("torque_cmd") - fb_in.get("torque_fb"))
             return dtg < self.torque_goal_tolerance
 
-    def set_sim_feedback_pp(self, cw, sw):
+    def set_sim_feedback_ppvt(self, cw, sw):
         # In MODE_PP, cw OPERATION_MODE_SPECIFIC_1 is NEW_SETPOINT cmd, sw
         # OPERATION_MODE_SPECIFIC_1 is SETPOINT_ACKNOWLEDGE fb
         if self.test_cw_bit(cw, "OPERATION_MODE_SPECIFIC_1"):
+            # MODE_PP only:
             # If cw NEW_SETPOINT is set, then set sw SETPOINT_ACKNOWLEDGE
             self.logger.info("sim SETPOINT_ACKNOWLEDGE set")
             return dict(OPERATION_MODE_SPECIFIC_1=True)
         elif self.target_reached(sw, cw):
-            # Target reached when target position reached
-            if not self.test_sw_bit(sw, "TARGET_REACHED"):
-                self.logger.info("sim TARGET_REACHED set")
-            return dict(TARGET_REACHED=True)
-        else:
-            return dict()
-
-    def set_sim_feedback_pv(self, cw, sw):
-        if self.target_reached(sw, cw):
-            # Target reached when target velocity reached
-            if not self.test_sw_bit(sw, "TARGET_REACHED"):
-                self.logger.info("sim TARGET_REACHED set")
-            return dict(TARGET_REACHED=True)
-        else:
-            return dict()
-
-    def set_sim_feedback_pt(self, cw, sw):
-        if self.target_reached(sw, cw):
-            # Target reached when target torque reached
+            # Target reached when target torque/velocity/position reached
             if not self.test_sw_bit(sw, "TARGET_REACHED"):
                 self.logger.info("sim TARGET_REACHED set")
             return dict(TARGET_REACHED=True)
@@ -937,14 +920,10 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
             pass  # Don't update mode-specific flags
         elif control_mode == self.MODE_HM:
             sw_flags.update(self.set_sim_feedback_hm(control_word))
-        elif control_mode == self.MODE_PP:
+        elif control_mode in (self.MODE_PP, self.MODE_PV, self.MODE_PT):
             # Test previous cw because target_reached() looks at fb_in, which is
             # set after command_in
-            sw_flags.update(self.set_sim_feedback_pp(cw_prev, sw_prev))
-        elif control_mode == self.MODE_PV:
-            sw_flags.update(self.set_sim_feedback_pv(cw_prev, sw_prev))
-        elif control_mode == self.MODE_PT:
-            sw_flags.update(self.set_sim_feedback_pt(cw_prev, sw_prev))
+            sw_flags.update(self.set_sim_feedback_ppvt(cw_prev, sw_prev))
 
         status_word = self.add_status_word_flags(status_word, **sw_flags)
 
