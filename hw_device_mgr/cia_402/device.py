@@ -342,6 +342,11 @@ class CiA402Device(CiA301Device, ErrorDevice):
             if not pp_success:
                 goal_reached = False
                 goal_reasons.append(pp_reason)
+        elif cm == self.MODE_PV:
+            pv_success, pv_reason = self.get_feedback_pv(sw)
+            if not pv_success:
+                goal_reached = False
+                goal_reasons.append(pv_reason)
 
         # Log status word changes
         if self.log_status_word_changes and fb_out.changed("status_word"):
