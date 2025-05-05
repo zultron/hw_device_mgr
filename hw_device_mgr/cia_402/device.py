@@ -21,8 +21,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
     - `home_request`:  Command homing operation (HM mode)
     - `move_request`:  Command move operation (PP mode)
     - `relative_target`:  Relative vs Absolute move operation (PP mode)
-    - `velocity_request`:  Command move operation (PV mode)
-    - `torque_request`:  Command move operation (PT mode)
 
     Feedback parameters:
     - `home_success`:  Drive completed homing successfully
@@ -30,9 +28,7 @@ class CiA402Device(CiA301Device, ErrorDevice):
     - `move_setpoint_ack`: Drive acknowledges PP-mode `move_request`
     - `move_success`: Drive reports PP-mode move succeeded
     - `following_error`: Drive reports following error in various modes
-    - `velocity_success`: Drive reports PV-mode velocity reached
     - `velocity_zero`: Drive reports zero speed in PV mode
-    - `torque_success`: Drive reports PT-mode torque reached
     """
 
     data_types = CiA301DataType
@@ -120,9 +116,7 @@ class CiA402Device(CiA301Device, ErrorDevice):
         move_setpoint_ack="bit",
         move_success="bit",
         following_error="bit",
-        velocity_success="bit",
         velocity_zero="bit",
-        torque_success="bit"
     )
     feedback_out_defaults = dict(
         **feedback_in_defaults,
@@ -133,9 +127,7 @@ class CiA402Device(CiA301Device, ErrorDevice):
         move_setpoint_ack=False,
         move_success=False,
         following_error=False,
-        velocity_success=False,
         velocity_zero=False,
-        torque_success=False
     )
 
     log_status_word_changes = True
@@ -211,61 +203,10 @@ class CiA402Device(CiA301Device, ErrorDevice):
 
     def get_feedback_pv(self, sw):
         # Control mode is PV
-        if not self.command_in.get("velocity_request"):
-            self.feedback_out.update(
-                velocity_success=False
-            )
-            return True, None
-        if self.feedback_out.get("state") != "OPERATION ENABLED":
-            reason = "Velocity request while drive not enabled"
-            self.feedback_out.update(
-                velocity_success=False,
-                fault=True,
-                fault_desc=reason,
-            )
-            return False, reason
-
-        success, reason = False, None
-        zero_speed = self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_1")
-        if self.test_sw_bit(sw, "TARGET_REACHED"):
-            # done bit set
-            success = True
-        else:
-            reason = "velocity not reached"
-
         self.feedback_out.update(
-            velocity_success=success, 
-            velocity_zero=zero_speed
+            velocity_zero=self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_1")
         )
-        return success, reason
-
-    def get_feedback_pt(self, sw):
-        # Control mode is PT
-        if not self.command_in.get("torque_request"):
-            self.feedback_out.update(
-                torque_success=False
-            )
-            return True, None
-        if self.feedback_out.get("state") != "OPERATION ENABLED":
-            reason = "Torque request while drive not enabled"
-            self.feedback_out.update(
-                torque_success=False,
-                fault=True,
-                fault_desc=reason,
-            )
-            return False, reason
-
-        success, reason = False, None
-        if self.test_sw_bit(sw, "TARGET_REACHED"):
-            # done bit set
-            success = True
-        else:
-            reason = "torque not reached"
-
-        self.feedback_out.update(
-            torque_success=success
-        )
-        return success, reason
+        return True, None
 
     def get_feedback_sto(self):
         # Process active STO:  Raise fault on OPERATION ENABLED command
@@ -306,10 +247,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
             return self.home_timeout
         if self.command_in.get("move_request"):
             return self.move_timeout
-        if self.command_in.get("velocity_request"):
-            return self.velocity_timeout
-        if self.command_in.get("torque_request"):
-            return self.torque_timeout
         return super().goal_reached_timeout
 
     def get_feedback(self):
@@ -332,31 +269,12 @@ class CiA402Device(CiA301Device, ErrorDevice):
         cm = fb_in.get("control_mode_fb")
         fb_out.update(status_word=sw, control_mode_fb=cm)
         cm_cmd = self.command_in.get("control_mode")
-        if cm != cm_cmd:
-            unexpected_mode = True
-            if self.MODE_HM == cm:
-                unexpected_mode = False
-            elif self.command_in.get("move_request"):
-                unexpected_mode = (self.MODE_PP != cm)
-            elif self.command_in.get("velocity_request"):
-                unexpected_mode = (self.MODE_PV != cm)
-            elif self.command_in.get("torque_request"):
-                unexpected_mode = (self.MODE_PT != cm)
-            if unexpected_mode:
-                goal_reached = False
-                cm_str = self.control_mode_str(cm)
-                cm_cmd_str = self.control_mode_str(cm_cmd)
-                goal_reasons.append(f"control_mode {cm_str} != {cm_cmd_str}")
-
-        # Log status word changes
-        if self.log_status_word_changes and fb_out.changed("status_word"):
-            self.logger.info(f"status_word:  {self.sw_to_str(sw)}")
-
-        # If device not yet operational, don't do any more, incl. log faults,
-        # etc.
-        if not fb_out.get("oper"):
-            return fb_out
-
+        if cm != cm_cmd and cm != self.MODE_HM:
+            goal_reached = False
+            cm_str = self.control_mode_str(cm)
+            cm_cmd_str = self.control_mode_str(cm_cmd)
+            goal_reasons.append(f"control_mode {cm_str} != {cm_cmd_str}")
+        
         # Calculate 'state' feedback
         for state, bits in self.state_bits.items():
             # Compare masked status word with pattern to determine current state
@@ -460,17 +378,10 @@ class CiA402Device(CiA301Device, ErrorDevice):
                 goal_reached = False
                 goal_reasons.append(pp_reason)
         elif cm == self.MODE_PV:
-            # Calculate velocity status
             pv_success, pv_reason = self.get_feedback_pv(sw)
             if not pv_success:
                 goal_reached = False
                 goal_reasons.append(pv_reason)
-        elif cm == self.MODE_PT:
-            # Calculate torque status
-            pt_success, pt_reason = self.get_feedback_pt(sw)
-            if not pt_success:
-                goal_reached = False
-                goal_reasons.append(pt_reason)
 
         # If in CiA402 FAULT state, set device fault
         if state_cmd == "FAULT":
@@ -538,8 +449,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
         home_request=False,
         move_request=False,
         relative_target=False,
-        velocity_request=False,
-        torque_request=False
     )
     command_in_data_types = dict(
         state="str",
@@ -547,8 +456,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
         home_request="bit",
         move_request="bit",
         relative_target="bit",
-        velocity_request="bit",
-        torque_request="bit"
     )
 
     # ------- Command out -------
@@ -691,40 +598,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
             OPERATION_MODE_SPECIFIC_3=relative_target,
         )
 
-    def pv_request_cw_flags(self):
-        # there are no operation specific flags for PV mode
-        # this is just here for logging consistency
-        #
-        # Check for velocity request
-        if self.command_in.get("velocity_request"):
-            if self.command_in.changed("velocity_request"):
-                self.logger.info("Velocity operation requested")
-            # Fast track as long as request in effect
-            self.command_out.update(fasttrack=True)
-        else:
-            # Clear request
-            #sw = self.feedback_in.get("status_word")
-            #stopped = self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_1")
-            if self.command_in.changed("velocity_request"):
-                self.logger.info("velocity request cleared")
-        return dict()
-
-    def pt_request_cw_flags(self):
-        # there are no operation specific flags for PT mode
-        # this is just here for logging consistency
-        #
-        # Check for torque request
-        if self.command_in.get("torque_request"):
-            if self.command_in.changed("torque_request"):
-                self.logger.info("Torque operation requested")
-            # Fast track as long as request in effect
-            self.command_out.update(fasttrack=True)
-        else:
-            # Clear request
-            if self.command_in.changed("torque_request"):
-                self.logger.info("torque request cleared")
-        return dict()
-
     @classmethod
     @lru_cache
     def cw_to_str(cls, cw):
@@ -758,10 +631,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
             cw_flags.update(self.hm_request_cw_flags())
         elif next_cm == self.MODE_PP:
             cw_flags.update(self.pp_request_cw_flags())
-        elif next_cm == self.MODE_PV:
-            cw_flags.update(self.pv_request_cw_flags())
-        elif next_cm == self.MODE_PT:
-            cw_flags.update(self.pt_request_cw_flags())
         else:
             cw_flags.update(OPERATION_MODE_SPECIFIC_1=False)
         next_cw = self._add_control_word_flags(control_word, **cw_flags)
@@ -901,12 +770,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
     def _get_next_control_mode(self, cmd_out):
         if self.command_in.get("home_request"):
             next_cm = self.MODE_HM
-        elif self.command_in.get("move_request"):
-            next_cm = self.MODE_PP
-        elif self.command_in.get("velocity_request"):
-            next_cm = self.MODE_PV
-        elif self.command_in.get("torque_request"):
-            next_cm = self.MODE_PT
         else:
             # Otherwise, copy control_mode from command_in
             next_cm = self.command_in.get("control_mode")
