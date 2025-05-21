@@ -52,8 +52,8 @@ class CiA402Device(CiA301Device, ErrorDevice):
 
     home_timeout = 15  # seconds
     move_timeout = 15  # seconds
-    velocity_timeout = 15 # seconds
-    torque_timeout = 15 #seconds
+    velocity_timeout = 15  # seconds
+    torque_timeout = 15  # seconds
 
     @classmethod
     def control_mode_str(cls, mode):
@@ -346,7 +346,7 @@ class CiA402Device(CiA301Device, ErrorDevice):
             if fb_out.get("error_code"):
                 error_code = fb_out.get("error_code")
                 fault_desc += f", code {error_code}"
-                if (error_desc := fb_out.get("description")):
+                if error_desc := fb_out.get("description"):
                     fault_desc += f" '{error_desc}'"
             else:
                 fault_desc += " (no error code)"
@@ -784,7 +784,7 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
         velocity_cmd="float",
         velocity_fb="float",
         torque_cmd="float",
-        torque_fb="float"
+        torque_fb="float",
     )
     feedback_in_defaults = dict(
         position_cmd=0.0,
@@ -792,7 +792,7 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
         velocity_cmd=0.0,
         velocity_fb=0.0,
         torque_cmd=0.0,
-        torque_fb=0.0
+        torque_fb=0.0,
     )
 
     feedback_out_data_types = dict(**feedback_in_data_types)
@@ -809,8 +809,8 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
 
     # diff. btw. pos. cmd + fb to signal target reached
     position_goal_tolerance = 0.01
-    velocity_goal_tolerance = 0.01 # TBD
-    torque_goal_tolerance = 0.01 # TBD
+    velocity_goal_tolerance = 0.01  # TBD
+    torque_goal_tolerance = 0.01  # TBD
 
     # ------- Sim feedback -------
 
@@ -834,8 +834,8 @@ class CiA402SimDevice(CiA402Device, CiA301SimDevice, ErrorSimDevice):
             perr = abs(fb_in.get("position_cmd") - fb_in.get("position_fb"))
             return perr < self.position_goal_tolerance
         elif control_mode == self.MODE_PV:
-            #zero_speed = self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_1")
-            #if zero_speed: ??
+            # zero_speed = self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_1")
+            # if zero_speed: ??
             verr = abs(fb_in.get("velocity_cmd") - fb_in.get("velocity_fb"))
             return verr < self.velocity_goal_tolerance
         elif control_mode == self.MODE_PT:
