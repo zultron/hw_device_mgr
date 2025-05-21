@@ -275,6 +275,22 @@ class CiA402Device(CiA301Device, ErrorDevice):
             cm_cmd_str = self.control_mode_str(cm_cmd)
             goal_reasons.append(f"control_mode {cm_str} != {cm_cmd_str}")
 
+        # Raise fault if device unexpectedly disabled
+        state_cmd = self.command_in.get("state")
+        if state_cmd == "OPERATION ENABLED":
+            if not self.test_sw_bit(sw, "READY_TO_SWITCH_ON"):
+                fault = True
+                fault_desc = "Enabled drive unexpectedly disabled"
+
+        # Log status word changes
+        if self.log_status_word_changes and fb_out.changed("status_word"):
+            self.logger.info(f"status_word:  {self.sw_to_str(sw)}")
+
+        # If device not yet operational, don't do any more, incl. log faults,
+        # etc.
+        if not fb_out.get("oper"):
+            return fb_out
+
         # Calculate 'state' feedback
         for state, bits in self.state_bits.items():
             # Compare masked status word with pattern to determine current state
@@ -288,7 +304,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
                 f"Unknown status word 0x{sw:X}; "
                 f"state {fb_out.get('state')} unchanged"
             )
-        state_cmd = self.command_in.get("state")
         if self._get_next_transition() >= 0:
             goal_reached = False
             sw = fb_in.get("status_word")
@@ -303,12 +318,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
         # Handle `FOLLOWING_ERROR` active
         ferror = self.test_sw_bit(sw, "OPERATION_MODE_SPECIFIC_2")
         fb_out.update(following_error=ferror)
-
-        # Raise fault if device unexpectedly disabled
-        if state_cmd == "OPERATION ENABLED":
-            if not self.test_sw_bit(sw, "READY_TO_SWITCH_ON"):
-                fault = True
-                fault_desc = "Enabled drive unexpectedly disabled"
 
         # Calculate 'transition' feedback
         new_st, old_st = fb_out.changed("state", return_vals=True)
@@ -329,15 +338,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
             if not sto_success:
                 goal_reached = False
                 goal_reasons.append(sto_reason)
-
-        # Log status word changes
-        if self.log_status_word_changes and fb_out.changed("status_word"):
-            self.logger.info(f"status_word:  {self.sw_to_str(sw)}")
-
-        # If device not yet operational, don't do any more, incl. log faults,
-        # etc.
-        if not fb_out.get("oper"):
-            return fb_out
 
         # Fault reported by drive
         if self.test_sw_bit(sw, "FAULT"):

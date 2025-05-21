@@ -53,6 +53,7 @@
     error_code:  0x00000000
     description:  No error
     fault_desc: ""
+    shutdown_complete:  False
   command_in:
     state:  OPERATION ENABLED
     control_mode:  3  # MODE_PV
@@ -60,11 +61,13 @@
     home_request:  False
     move_request:  False
     relative_target:  False
+    shutdown:  False
   command_out:
     control_word:  0x000F  # OPERATION ENABLED
     control_mode:  3  # MODE_PV
     init_params:  True
     fasttrack:  False
+    shutdown_latch:  False
   sim_feedback:
     online:  True
     oper:  True
@@ -141,9 +144,9 @@
     status_word:  0x001F  # FAULT REACTION ACTIVE
     state:  FAULT REACTION ACTIVE
     transition:  13  # (Any)->FAULT REACTION ACTIVE
-    goal_reason:  state FAULT REACTION ACTIVE != OPERATION ENABLED; Fault (no error code)
+    goal_reason:  Fault state reached; state FAULT REACTION ACTIVE != OPERATION ENABLED
     fault:  True
-    fault_desc:  Fault (no error code)
+    fault_desc:  Drive status word FAULT bit set (no error code)
     velocity_fb:  0.0
   command_out:
     control_word:  0x0000
@@ -159,7 +162,7 @@
     status_word:  0x0018  # FAULT + VOLTAGE_ENABLED
     state:  FAULT
     transition:  14  # FAULT REACTION ACTIVE->FAULT
-    goal_reason:  state FAULT != OPERATION ENABLED; Enabled drive unexpectedly disabled; Fault (no error code)
+    goal_reason:  Fault state reached; state FAULT != OPERATION ENABLED
   command_out:
     control_word:  0x0080  # Clear fault
   sim_feedback:
@@ -176,7 +179,7 @@
     status_word:  0x0050  # SWITCH ON DISABLED + VOLTAGE_ENABLED - SETPOINT_ACK
     state:  SWITCH ON DISABLED
     transition:  15  # FAULT->SWITCH ON DISABLED
-    goal_reason:  state SWITCH ON DISABLED != OPERATION ENABLED; Enabled drive unexpectedly disabled
+    goal_reason:  Fault state reached; state SWITCH ON DISABLED != OPERATION ENABLED
     # fault:  True  # Already True
     fault_desc:  Enabled drive unexpectedly disabled
   command_out:
