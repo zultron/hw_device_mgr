@@ -329,24 +329,6 @@ class CiA402Device(CiA301Device, ErrorDevice):
             if not sto_success:
                 goal_reached = False
                 goal_reasons.append(sto_reason)
-        # Mode-specific functions
-        if cm == self.MODE_HM:
-            # Calculate homing status
-            hm_success, hm_reason = self.get_feedback_hm(sw)
-            if not hm_success:
-                goal_reached = False
-                goal_reasons.append(hm_reason)
-        elif cm == self.MODE_PP:
-            # Calculate move status
-            pp_success, pp_reason = self.get_feedback_pp(sw)
-            if not pp_success:
-                goal_reached = False
-                goal_reasons.append(pp_reason)
-        elif cm == self.MODE_PV:
-            pv_success, pv_reason = self.get_feedback_pv(sw)
-            if not pv_success:
-                goal_reached = False
-                goal_reasons.append(pv_reason)
 
         # Log status word changes
         if self.log_status_word_changes and fb_out.changed("status_word"):
